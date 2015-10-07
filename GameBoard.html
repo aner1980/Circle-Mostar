@@ -22,7 +22,7 @@
                 },
                  generatePowerUp:function(x,y,circle){
                     for(var i=0; i<this.PowerUps.length;i++){
-                        if(this.PowerUps[i].x == x && this.pixels[i].y == y) {
+                        if(this.PowerUps[i].x == x && this.PowerUps[i].y == y) {
                           this.PowerUps[i] = this.generateEmptyPixel(circle);
                           break;
                         }
@@ -30,13 +30,13 @@
                 },
                 initGenerate:function(circle){
                     var pixelCount=Board.Size.width*Board.Size.height;
-                    var foodCount=pixelCount/100; // 1 out of 100 pixels are foods.
+                    var foodCount=pixelCount/10000; // 1 out of 100 pixels are foods.
                     for(var i=0; i<foodCount; i++) {
-                        this.Foods[i]=generateEmptyPixel(circle);
+                        this.Foods[i]=this.generateEmptyPixel(circle);
                     }
-                    var powerUpCount=pixelCount/200; // 1 out of 200 pixels are powerUps.
+                    var powerUpCount=pixelCount/20000; // 1 out of 200 pixels are powerUps.
                     for(var i=0; i<powerUpCount; i++) {
-                        this.PowerUps[i]=generateEmptyPixel(circle);
+                        this.PowerUps[i]=this.generateEmptyPixel(circle);
                     }
                 },
                 generateEmptyPixel:function(circle){
@@ -76,11 +76,6 @@
                 }
             };
 
-            var Center={
-                x:249,
-                y:249
-            };
-
             var Direction={
                 up:1,
                 right:2,
@@ -92,35 +87,36 @@
               this.x=250;
               this.y=250;
               this.direction=undefined;
-              this.time=30;
-              this.speed=20;
+              this.time=150;
+              this.speed=100;
               this.radius=0.5;
-              this.timeIncreasePerFood=10;
-              this.speedDecreasePerFood=1; //TODO: Case when reaching the limit.
+              this.timeIncreasePerFood=5;
+              this.speedDecreasePerFood=10; //TODO: Case when reaching the limit.
               this.radiusIncreasePerFood=0.5;
               this.score=0;
-              function move(direction){
+              this.move=function(direction){
                 switch(direction) {
                   case Direction.up:
-                    this.y-=speed;
+                    this.y--;
                     break;
                   case Direction.down:
-                    this.y+=speed;
+                    this.y++;
                     break;
                   case Direction.left:
-                    this.x-=speed;
+                    this.x--;
                     break;
                   case Direction.right:
-                    this.x+=speed;
+                    this.x++;
                 }
-                if(timeExpire() || hitEdge()) {
-                  alert('Your score is '+score);
+                this.time--;
+                if(timeExpire(this.time) || hitEdge(this)) {
+                  alert('Your score is '+this.score);
                   return false;
                 }
                 if(eatFood(this)) {
-                  this.radius+=radiusIncreasePerFood;
-                  this.speed-=speedDecreasePerFood;
-                  this.time+=timeIncreasePerFood;
+                  this.radius+=this.radiusIncreasePerFood;
+                  this.speed-=this.speedDecreasePerFood;
+                  this.time+=this.timeIncreasePerFood;
                   this.score++;
                 } else if(eatPowerup(this)) {
                   //TODO: store power up.
@@ -140,11 +136,12 @@
 
               function eatFood(circle){
                 var eatScale=Math.round(circle.radius);
+
                 for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
                   for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
                     for(var k=0; k<Board.Foods.length; k++){
-                      if(i==Board.Foods.x && j==Board.Foods.y) {
-                        Board.generateFood(x,y,circle);
+                      if(i==Board.Foods[k].x && j==Board.Foods[k].y) {
+                        Board.generateFood(i,j,circle);
                         return true;
                       }
                     }
@@ -154,12 +151,12 @@
               };
 
               function eatPowerup(circle){
-                var scale=Math.round(circle.radius);
+                var eatScale=Math.round(circle.radius);
                 for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
                   for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
                     for(var k=0; k<Board.PowerUps.length; k++){
-                      if(i==Board.PowerUps.x && j==Board.PowerUps.y) {
-                        Board.generatePowerUp(x,y,circle);
+                      if(i==Board.PowerUps[k].x && j==Board.PowerUps[k].y) {
+                        Board.generatePowerUp(i,j,circle);
                         return true;
                       }
                     }
@@ -187,25 +184,25 @@
 
                     ctx.beginPath();
                     ctx.fillStyle='black';
-                    ctx.fillAct(circle.x,circle.y,circle.radius*10,0,2*Math.PI);        
+                    ctx.arc(circle.x,circle.y,circle.radius*10,0,2*Math.PI);        
                     ctx.fill();
                     ctx.stroke();
 
-                    ctx.beginPath();
                     ctx.fillStyle='red';
                     for(var i=0; i<Board.Foods.length; i++) {
-                      ctx.fillAct(Board.Foods[i].x,Board.Foods[i].y,10,0,2*Math.PI);
+                      ctx.beginPath();
+                      ctx.arc(Board.Foods[i].x,Board.Foods[i].y,5,0,2*Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
                     }
-                    ctx.fill();
-                    ctx.stroke();
 
-                    ctx.beginPath();
                     ctx.fillStyle='blue';
                     for(var i=0; i<Board.PowerUps.length; i++) {
-                      ctx.fillAct(Board.PowerUps[i].x,Board.PowerUps[i].y,10,0,2*Math.PI);
+                      ctx.beginPath();
+                      ctx.arc(Board.PowerUps[i].x,Board.PowerUps[i].y,5,0,2*Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
                     }
-                    ctx.fill();
-                    ctx.stroke();
                 }
 
                 var direction,dict_direction=[];
@@ -221,8 +218,10 @@
                 (function(){
                     if(circle.move(direction)){
                         draw(circle);
-                        setTimeout(arguments.callee,50)
+                        console.log(circle.time);
+                        setTimeout(arguments.callee,200-circle.speed)
                     }
+
                 })();
             }
             init();
