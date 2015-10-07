@@ -30,11 +30,11 @@
                 },
                 initGenerate:function(circle){
                     var pixelCount=Board.Size.width*Board.Size.height;
-                    var foodCount=pixelCount/10000; // 1 out of 100 pixels are foods.
+                    var foodCount=pixelCount/10000; // 1 out of 1000 pixels are foods.
                     for(var i=0; i<foodCount; i++) {
                         this.Foods[i]=this.generateEmptyPixel(circle);
                     }
-                    var powerUpCount=pixelCount/20000; // 1 out of 200 pixels are powerUps.
+                    var powerUpCount=pixelCount/100000; // 1 out of 10000 pixels are powerUps.
                     for(var i=0; i<powerUpCount; i++) {
                         this.PowerUps[i]=this.generateEmptyPixel(circle);
                     }
@@ -88,12 +88,13 @@
               this.y=250;
               this.direction=undefined;
               this.time=150;
-              this.speed=100;
+              this.speed=190;
               this.radius=0.5;
               this.timeIncreasePerFood=5;
               this.speedDecreasePerFood=10; //TODO: Case when reaching the limit.
               this.radiusIncreasePerFood=0.5;
               this.score=0;
+              this.powerUpTime=0;
               this.move=function(direction){
                 switch(direction) {
                   case Direction.up:
@@ -108,25 +109,31 @@
                   case Direction.right:
                     this.x++;
                 }
-                this.time--;
+                this.time-=20/this.speed;
                 if(timeExpire(this.time) || hitEdge(this)) {
                   alert('Your score is '+this.score);
                   return false;
+                }
+                if(this.powerUpTime>0) {
+                  this.powerUpTime-=20/this.speed;
+                  if(this.powerUpTime <= 0)
+                    this.speed-=10; //currently i'm just assuming all powerups just accelerates speed for 20(time unit)
                 }
                 if(eatFood(this)) {
                   this.radius+=this.radiusIncreasePerFood;
                   this.speed-=this.speedDecreasePerFood;
                   this.time+=this.timeIncreasePerFood;
                   this.score++;
-                } else if(eatPowerup(this)) {
-                  //TODO: store power up.
+                } else if(eatPowerup(this)) { //currently i'm just assuming all powerups just accelerates speed for 20(time unit)
+                  this.speed+=10;
+                  this.powerUpTime+=20;
                 }
                 //TODO: eat dummy NPC.
                 return true;
               };
 
               function hitEdge(circle){
-                var scale=Math.floor(circle.radius);
+                var scale=Math.floor(circle.radius)*10;
                 if(circle.x-scale<0 || circle.y-scale<0 || circle.x+scale>=Board.Size.width || circle.y+scale>=Board.Size.height) {
                   return true;
                 } else {
@@ -135,8 +142,7 @@
               };
 
               function eatFood(circle){
-                var eatScale=Math.round(circle.radius);
-
+                var eatScale=Math.round(circle.radius)*10; //times 10 to be more sensitive
                 for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
                   for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
                     for(var k=0; k<Board.Foods.length; k++){
@@ -151,7 +157,7 @@
               };
 
               function eatPowerup(circle){
-                var eatScale=Math.round(circle.radius);
+                var eatScale=Math.round(circle.radius)*10;
                 for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
                   for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
                     for(var k=0; k<Board.PowerUps.length; k++){
