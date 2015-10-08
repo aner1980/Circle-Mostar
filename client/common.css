@@ -1,0 +1,213 @@
+
+body {
+	margin: 0;
+  	padding: 0;
+	background-image: url("pic/background1");
+	background-size: cover;
+}
+
+body, td, th {
+	color: #666633;
+}
+
+h1, h2 {
+	color: #663300;
+}
+
+h3, h4, h5, h6 {
+	color: #996633;
+}
+
+a {
+  color: #996633;
+}
+.gallery_img{
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	background-repeat: repeat;
+
+}
+.container {
+	width: 80%;
+	max-width: 1260px;
+	min-width: 780px;
+	background-image: url('pics/background1.jpg');
+	background-size: cover;
+	margin: 0 auto;
+}
+
+.img{
+	width: 50%;
+  	height: 15em;
+  	margin: 0 auto;
+  	overflow: hidden;
+	background-size: length|cover
+}
+
+.img2{
+	width: 50%;
+  	height: 15em;
+  	margin: 0 auto;
+  	overflow: hidden;
+	background-size: auto|length|cover
+}
+
+.img3{
+	background-size: cover; 
+	position: fixed;
+	background-size: auto|length|cover
+}
+
+.img4{
+	background-size: cover;
+}
+.img5{
+	background-size: cover; 
+}
+.header {
+	background: #6F7D94;
+}
+
+.logo{
+	position: absolute;
+	top: calc(50% - 35px);
+	left: calc(38% - 255px);
+	z-index: 2;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 55px;
+	color: #fff;
+	
+}
+
+.sidebar1 {
+	float: right;
+	width: 25%;
+	background: #background: #666633;;
+	padding-bottom: 10px;
+}
+.content {
+
+	position: absolute;
+	top: calc(50% - 75px);
+	left: calc(50% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 2;
+}
+
+.content input[type=text]{
+	width: 250px;
+	height: 30px;
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.6);
+	border-radius: 2px;
+	color: #fff;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 4px;
+}
+
+.content input[type=password]{
+	width: 250px;
+	height: 30px;
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.6);
+	border-radius: 2px;
+	color: #fff;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 4px;
+	margin-top: 10px;
+}
+
+.content input[type=button]:hover{
+	opacity: 0.8;
+}
+.content input[type=text]:focus{
+	outline: none;
+	border: 1px solid rgba(255,255,255,0.9);
+}
+
+.content input[type=password]:focus{
+	outline: none;
+	border: 1px solid rgba(255,255,255,0.9);
+}
+
+.content input[type=submit]{
+	width: 250px;
+	height: 35px;
+	background: #fff;
+	border: 1px solid #fff;
+	cursor: pointer;
+	border-radius: 2px;
+	color: #a18d6c;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 6px;
+	margin-top: 10px;
+}
+
+.content input[type=submit]:hover{
+	opacity: 0.8;
+}
+
+.content input[type=submit]:focus{
+	outline: none;
+}
+
+::-webkit-input-placeholder{
+   color: rgba(255,255,255,0.6);
+}
+
+::-moz-input-placeholder{
+   color: rgba(255,255,255,0.6);
+}
+.content ul, .content ol { 
+	padding: 0 15px 15px 40px; 
+}
+
+ul.nav {
+	list-style: none;
+	border-top: 1px solid #666;
+	margin-bottom: 15px; 
+}
+ul.nav li {
+	border-bottom: 1px solid #666; 
+}
+ul.nav a, ul.nav a:visited { 
+	padding: 5px 5px 5px 15px;
+	display: block;
+	text-decoration: none;
+	background: #c0b895;
+	color: #663300;
+}
+ul.nav a:hover, ul.nav a:active, ul.nav a:focus { 
+	background: #996633;
+	color: #FFF;
+}
+
+.header {
+	padding: 5px 0;
+	background-size: cover;
+	background-image: url('oops.jpg');
+}
+
+.fltrt { 
+	float: right;
+	margin-left: 8px;
+}
+.fltlft { 
+	float: left;
+	margin-right: 8px;
+}
+.clearfloat { 
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0px;
+}
