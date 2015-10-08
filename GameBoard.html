@@ -1,0 +1,237 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<body>  
+    <canvas width="500" height="500" style="border:1px solid black"></canvas>
+    <script>
+        (function(){
+            var Board={
+                Foods:[], //Array to store pixels
+                PowerUps:[],
+                Size:{
+                    width:500,
+                    height:500
+                },
+                 // substitute the old food with a new food at a random pixel
+                generateFood:function(x,y,circle){
+                    for(var i=0; i<this.Foods.length;i++){
+                        if(this.Foods[i].x == x && this.Foods[i].y == y) {
+                          this.Foods[i] = this.generateEmptyPixel(circle);
+                          break;
+                        }
+                    }
+                },
+                 generatePowerUp:function(x,y,circle){
+                    for(var i=0; i<this.PowerUps.length;i++){
+                        if(this.PowerUps[i].x == x && this.PowerUps[i].y == y) {
+                          this.PowerUps[i] = this.generateEmptyPixel(circle);
+                          break;
+                        }
+                    }
+                },
+                initGenerate:function(circle){
+                    var pixelCount=Board.Size.width*Board.Size.height;
+                    var foodCount=pixelCount/10000; // 1 out of 1000 pixels are foods.
+                    for(var i=0; i<foodCount; i++) {
+                        this.Foods[i]=this.generateEmptyPixel(circle);
+                    }
+                    var powerUpCount=pixelCount/100000; // 1 out of 10000 pixels are powerUps.
+                    for(var i=0; i<powerUpCount; i++) {
+                        this.PowerUps[i]=this.generateEmptyPixel(circle);
+                    }
+                },
+                generateEmptyPixel:function(circle){
+                    var lowX = circle.x-Math.ceil(circle.radius);
+                    var HighX = circle.x+Math.ceil(circle.radius);
+                    var lowY = circle.y-Math.ceil(circle.radius);
+                    var HighY = circle.y+Math.ceil(circle.radius);
+                    var map=[]; // Map for al the empty pixels available
+                    for(var x=0; x<this.Size.width; x++) {
+                      for(var y=0; y<this.Size.height; y++) {
+                        if(x<=HighX && x>=lowX && y<=HighY && y>=lowY) {
+                          continue;
+                        }
+                        var isEmpty=true;
+                        for(var i=0; i<this.Foods.length; i++) {
+                          if(x==this.Foods[i].x && y==this.Foods[i].y){
+                            isEmpty=false;
+                            break;
+                          }
+                        }
+                        if(!isEmpty) {
+                          continue;
+                        }
+                        for(var i=0; i<this.PowerUps.length; i++) {
+                          if(x==this.PowerUps[i].x && y==this.PowerUps[i].y){
+                            isEmpty=false;
+                            break;
+                          }
+                        }
+                        if(isEmpty) {
+                          map.push([x,y]);
+                        }
+                      }
+                    }
+                    var i=Math.floor(Math.random()*map.length);
+                    return {x:map[i][0], y:map[i][1]};
+                }
+            };
+
+            var Direction={
+                up:1,
+                right:2,
+                down:-1,
+                left:-2
+            };
+
+            function Circle(){
+              this.x=250;
+              this.y=250;
+              this.direction=undefined;
+              this.time=150;
+              this.speed=190;
+              this.radius=0.5;
+              this.timeIncreasePerFood=5;
+              this.speedDecreasePerFood=10; //TODO: Case when reaching the limit.
+              this.radiusIncreasePerFood=0.5;
+              this.score=0;
+              this.powerUpTime=0;
+              this.move=function(direction){
+                switch(direction) {
+                  case Direction.up:
+                    this.y--;
+                    break;
+                  case Direction.down:
+                    this.y++;
+                    break;
+                  case Direction.left:
+                    this.x--;
+                    break;
+                  case Direction.right:
+                    this.x++;
+                }
+                this.time-=20/this.speed;
+                if(timeExpire(this.time) || hitEdge(this)) {
+                  alert('Your score is '+this.score);
+                  return false;
+                }
+                if(this.powerUpTime>0) {
+                  this.powerUpTime-=20/this.speed;
+                  if(this.powerUpTime <= 0)
+                    this.speed-=10; //currently i'm just assuming all powerups just accelerates speed for 20(time unit)
+                }
+                if(eatFood(this)) {
+                  this.radius+=this.radiusIncreasePerFood;
+                  this.speed-=this.speedDecreasePerFood;
+                  this.time+=this.timeIncreasePerFood;
+                  this.score++;
+                } else if(eatPowerup(this)) { //currently i'm just assuming all powerups just accelerates speed for 20(time unit)
+                  this.speed+=10;
+                  this.powerUpTime+=20;
+                }
+                //TODO: eat dummy NPC.
+                return true;
+              };
+
+              function hitEdge(circle){
+                var scale=Math.floor(circle.radius)*10;
+                if(circle.x-scale<0 || circle.y-scale<0 || circle.x+scale>=Board.Size.width || circle.y+scale>=Board.Size.height) {
+                  return true;
+                } else {
+                  return false;
+                }
+              };
+
+              function eatFood(circle){
+                var eatScale=Math.round(circle.radius)*10; //times 10 to be more sensitive
+                for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
+                  for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
+                    for(var k=0; k<Board.Foods.length; k++){
+                      if(i==Board.Foods[k].x && j==Board.Foods[k].y) {
+                        Board.generateFood(i,j,circle);
+                        return true;
+                      }
+                    }
+                  }
+                }
+                return false;
+              };
+
+              function eatPowerup(circle){
+                var eatScale=Math.round(circle.radius)*10;
+                for(var i=circle.x-eatScale; i<circle.x+eatScale; i++) {
+                  for(var j=circle.y-eatScale; j<circle.y+eatScale; j++) {
+                    for(var k=0; k<Board.PowerUps.length; k++){
+                      if(i==Board.PowerUps[k].x && j==Board.PowerUps[k].y) {
+                        Board.generatePowerUp(i,j,circle);
+                        return true;
+                      }
+                    }
+                  }
+                }
+                return false;
+              };
+
+              function timeExpire(time){
+                if(time <= 0) {
+                  return true;
+                } else {
+                  return false;
+                }
+              }
+            }
+
+            function init(){
+                var circle=new Circle();
+                Board.initGenerate(circle);
+                var ctx=document.querySelector('canvas').getContext('2d');
+
+                function draw(circle){
+                    ctx.clearRect(0,0,500,500);
+
+                    ctx.beginPath();
+                    ctx.fillStyle='black';
+                    ctx.arc(circle.x,circle.y,circle.radius*10,0,2*Math.PI);        
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.fillStyle='red';
+                    for(var i=0; i<Board.Foods.length; i++) {
+                      ctx.beginPath();
+                      ctx.arc(Board.Foods[i].x,Board.Foods[i].y,5,0,2*Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
+                    }
+
+                    ctx.fillStyle='blue';
+                    for(var i=0; i<Board.PowerUps.length; i++) {
+                      ctx.beginPath();
+                      ctx.arc(Board.PowerUps[i].x,Board.PowerUps[i].y,5,0,2*Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
+                    }
+                }
+
+                var direction,dict_direction=[];
+                dict_direction[37]=Direction.left;
+                dict_direction[38]=Direction.up;
+                dict_direction[39]=Direction.right;
+                dict_direction[40]=Direction.down;
+
+                document.addEventListener('keydown',function(e){
+                    direction=dict_direction[e.keyCode]||direction;
+                });
+
+                (function(){
+                    if(circle.move(direction)){
+                        draw(circle);
+                        console.log(circle.time);
+                        setTimeout(arguments.callee,200-circle.speed)
+                    }
+
+                })();
+            }
+            init();
+        })();
+    </script>
+</body>  
+</html>  
