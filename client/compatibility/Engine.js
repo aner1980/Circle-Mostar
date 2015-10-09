@@ -1,6 +1,6 @@
 var DELTAT = 0.0625;
-var RADIUS_DELAY_PS = 1; // per second
-var FOOD_RADIUS_INCREASE = 2;
+var RADIUS_DELAY_PS = 3; // per second
+var FOOD_RADIUS_INCREASE = 3;
 var GameIntervalDemo = null;
 var KeyMap = [];
 
@@ -36,8 +36,9 @@ function checkCollide(Circle1, Circle2) {
 		Math.pow(Circle1.pos[0] - Circle2.pos[0], 2) +  // dX^2
 		Math.pow(Circle1.pos[1] - Circle2.pos[1], 2)    // dY^2
 	);
+	var collideDist = Circle1.radius + Circle2.radius - Math.min(Circle1.radius, Circle2.radius)/2;
 	
-	if (mag <= Circle1.radius + Circle2.radius && (Circle1.entity == 1 || Circle2.entity == 1) && (Circle1.radius > 0 && Circle2.radius > 0)) {
+	if (mag <= collideDist && (Circle1.entity == 1 || Circle2.entity == 1) && (Circle1.radius > 0 && Circle2.radius > 0)) {
 		console.log("COLLISION!");
 		console.log(Circle1);
 		console.log(Circle2);
@@ -75,7 +76,7 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 	UsedCircle.radius = 0;
 }
 
-var Powerups = [ {name: "speed", duration: 10, bonus: 10} ]
+var Powerups = [ {}, {name: "speed", duration: 5, bonus: 60} ]
 
 var Board2 = {
 	Active_Circles: [], // Array to store circles
@@ -104,6 +105,7 @@ var Board2 = {
 			var Circle = this.Active_Circles[i];
 			var powerup = Circle.powerup;
 			if (powerup > 0 && Circle.entity == 1) {
+				console.log('POWERUP: ' + powerup);
 				if (Circle.pu_active == Powerups[powerup].duration) {
 					switch (powerup) {
 						case 1:
@@ -118,6 +120,7 @@ var Board2 = {
 							break;
 					}
 				}
+				Circle.pu_active -= DELTAT;
 			}
 		}
 					
@@ -192,7 +195,7 @@ var Board2 = {
 		// Create Player Circle
 		var Plr = new Circle2();
 		Plr.pos = [350, 350];
-		Plr.radius = 10;
+		Plr.radius = 30;
 		Plr.entity = 1;
 		Plr.user_id = Meteor.userId();
 		this.Active_Circles.push(Plr)
@@ -207,7 +210,7 @@ var Board2 = {
 		
 		var D2 = new Circle2();
 		D2.pos = [375, 125];
-		D2.radius = 10;
+		D2.radius = 20;
 		D2.entity = 1;
 		D2.isDummy = true;
 		this.Active_Circles.push(D2)

@@ -1,0 +1,24 @@
+<template name="profile_page">
+	<div class="container">
+	<header>
+		<h1>Profile</h1>
+		{{> loginButtons}} 
+	</header>
+
+	{{#if currentUser}}
+		<ul>
+			{{> prof}}
+		</ul>
+	{{/if}}
+
+	</div>
+</template>
+
+<template name="prof">
+  <ul>
+	<li>Name: {{currentUser.username}}</li>
+	<li>Top Score: {{currentUser.TopScore}}</li>
+	<li>Power Ups: {{currentUser.PowerUps}}</li>
+	<li>Currency: {{currentUser.Currency}}</li>
+  </ul>
+</template>

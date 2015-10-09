@@ -1,4 +1,40 @@
 <body>  
-    <canvas width="1000" height="750" style="border:1px solid black"></canvas>
-    
+    {{> site}}
 </body>
+
+<template name="site">
+	<div id="header-nav">
+		<span id="to-game" class="nav">Play</span><span id="to-profile" class="nav">Profile</span>
+		{{> loginButtons}}
+	</div>
+
+	{{#if currentUser}}
+		{{#if pageIs "Game"}}
+				{{#if gameStateIs "NotStarted"}}
+					{{> gameNotStarted}}
+				{{/if}}
+				{{#if gameStateIs "Over"}}
+					{{> gameOver}}
+				{{/if}}
+			<canvas width="1000" height="750" style="border:1px solid black">
+			</canvas>
+		{{/if}}
+		{{#if pageIs "Profile"}}
+			{{> profile_page}}
+		{{/if}}
+	{{/if}}
+
+</template>
+
+<template name="gameNotStarted">
+		<div class="g-popup game-start">
+			<button type="button">Start Game</button>
+		</div>
+</template>
+
+<template name="gameOver">
+		<div class="g-popup game-start">
+			<span class="GOVER">Game Over</span><br />
+			<button type="button">Play Again</button>
+		</div>
+</template>

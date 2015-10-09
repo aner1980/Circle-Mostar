@@ -1,3 +1,75 @@
+.GOVER {
+	color: red;
+	font-size: 24px;
+	text-align: center;
+	width: 100%;
+}
+
+.nav {
+	cursor: pointer;
+	color: white;
+	font-size: 18px;
+}
+
+.g-popup {
+	position: fixed;
+	height: 300px;
+	width: 500px;
+	top: 50%;
+	margin-top: -150px;
+	left: 50%;
+	margin-left: -250px;
+	background-color: white;
+	z-index: 10;
+	text-align: center;
+	border: 1px solid black;
+}
+
+.g-popup button {
+	position: relative;
+	width: 250px;
+	height: 50px;
+	line-height: 50px;
+	font-size: 25px;
+	margin-left: 125px;
+	background-color: #0074BD;
+	color: white;
+	bottom: 0px;
+	cursor: pointer;
+}
+
+#header-nav {
+	height: 45px;
+	background-color: rgba(200, 200, 200, 0.5);
+}
+
+#header-nav span {
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 45px;
+	line-height: 45px;
+}
+
+canvas {
+	background-color: white;
+	margin: 0 auto;
+	display: block;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100%;
+  background: white;
+}
+
+header {
+  background: #d2edf4;
+  background-image: linear-gradient(to bottom, #d0edf5, #e1e5f0 100%);
+  padding: 20px 15px 15px 15px;
+  position: relative;
+}
+
 
 body {
 	margin: 0;
