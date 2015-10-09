@@ -1,3 +1,268 @@
+var DELTAT = 0.0625;
+var RADIUS_DELAY_PS = 1; // per second
+var FOOD_RADIUS_INCREASE = 2;
+var GameIntervalDemo = null;
+var KeyMap = [];
+
+function performMove(Circle, dt) {
+	// Change velocity for user circle
+	if (Circle.user_id == Meteor.userId()) {
+		var userVel = [0, 0];
+		if (KeyMap[37] == 1) {
+			// Left
+			userVel[0] += -1;
+		}
+		if (KeyMap[39] == 1) {
+			// Right
+			userVel[0] += 1;
+		}
+		if (KeyMap[38] == 1) {
+			// Up
+			userVel[1] += -1;
+		}
+		if (KeyMap[40] == 1) {
+			// Down
+			userVel[1] += 1;
+		}
+		Circle.vel = userVel;
+		console.log(userVel);
+	}
+	Circle.pos[0] += Circle.vel[0] * Circle.speed * dt;
+	Circle.pos[1] += Circle.vel[1] * Circle.speed * dt;
+}
+
+function checkCollide(Circle1, Circle2) {
+	var mag = Math.sqrt( 
+		Math.pow(Circle1.pos[0] - Circle2.pos[0], 2) +  // dX^2
+		Math.pow(Circle1.pos[1] - Circle2.pos[1], 2)    // dY^2
+	);
+	
+	if (mag <= Circle1.radius + Circle2.radius && (Circle1.entity == 1 || Circle2.entity == 1) && (Circle1.radius > 0 && Circle2.radius > 0)) {
+		console.log("COLLISION!");
+		console.log(Circle1);
+		console.log(Circle2);
+		// Consume!
+		if (Circle1.entity == 1 && Circle2.entity != 1) {
+			consumeOrGather(Circle1, Circle2);
+		} else if (Circle2.entity == 1 && Circle1.entity != 1) {
+			consumeOrGather(Circle2, Circle1);
+		} else if (Circle1.radius > Circle2.radius) {
+			//Consume Circle2
+//			console.log('1 > 2');
+			consumeOrGather(Circle1, Circle2); // Circle2.radius = 0;
+		} else if (Circle2.radius > Circle1.radius) {
+			// Consume Circle1
+//			console.log('2 > 1');
+			consumeOrGather(Circle2, Circle1); // Circle1.radius = 0;
+		} 
+	}
+}
+
+function consumeOrGather(OwnerCircle, UsedCircle) {
+	if (UsedCircle.entity == 1) {
+		// Consumed PLAYER
+		OwnerCircle.radius += UsedCircle.radius / 2;
+	} else if (UsedCircle.entity == 2) {
+		// Consumed POWERUP
+		if (OwnerCircle.powerup == 0) {
+			OwnerCircle.powerup = UsedCircle.powerup;
+			OwnerCircle.pu_active = Powerups[OwnerCircle.powerup].duration;
+		}
+	} else if (UsedCircle.entity == 3) {
+		// Consumed FOOD
+		OwnerCircle.radius += FOOD_RADIUS_INCREASE;
+	}
+	UsedCircle.radius = 0;
+}
+
+var Powerups = [ {name: "speed", duration: 10, bonus: 10} ]
+
+var Board2 = {
+	Active_Circles: [], // Array to store circles
+	Size: [1000, 750],
+	doAllMove: function() {
+//		console.log(this);
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			var Circle = this.Active_Circles[i];
+			performMove(Circle, DELTAT);
+			if (!Circle.isDummy && Circle.entity == 1) {
+				Circle.radius -= RADIUS_DELAY_PS * DELTAT;
+			}
+		}
+	},
+	detectAllCollisions: function() {
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			for (var k = i+1; k < this.Active_Circles.length; k++) {
+				var Circle1 = this.Active_Circles[i];
+				var Circle2 = this.Active_Circles[k];
+				checkCollide(Circle1, Circle2);
+			}
+		}
+	},
+	runPowerups: function() {
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			var Circle = this.Active_Circles[i];
+			var powerup = Circle.powerup;
+			if (powerup > 0 && Circle.entity == 1) {
+				if (Circle.pu_active == Powerups[powerup].duration) {
+					switch (powerup) {
+						case 1:
+							Circle.speed += Powerups[1].bonus;
+							break;
+					}
+				} else if (Circle.pu_active <= 0) {
+					switch (powerup) {
+						case 1: 
+							Circle.speed -= Powerups[1].bonus;
+							Circle.powerup = 0;
+							break;
+					}
+				}
+			}
+		}
+					
+	},
+	determineGameOver: function() {
+		var newCircles = [];
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			var Circle = this.Active_Circles[i];
+			if (Circle.radius > 0) {
+				newCircles.push(Circle);
+			} else {
+				console.log('GAME OVER');
+				if (Circle.user_id == Meteor.userId()) {
+					Session.set('GameState', 'Over');
+				}
+			}
+		}
+		this.Active_Circles = newCircles;
+	},
+	createEntity: function(entityType, x, y) {
+		var C = new Circle2();
+		C.pos = [x, y];
+		C.speed = 150;
+		C.entity = entityType;
+		if (entityType == 2) {
+			C.powerup = 1;
+		}
+		this.Active_Circles.push(C);
+	},
+	drawBoard: function() {
+		var ctx = document.querySelector('canvas').getContext('2d');
+		ctx.clearRect(0,0,Board2.Size[0],Board2.Size[1]);
+		
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			var Circle = this.Active_Circles[i]
+			var x = Circle.pos[0];
+			var y = Circle.pos[1];
+			
+			if (Circle.entity == 1) {
+				if (Circle.user_id == Meteor.userId()) {
+					ctx.fillStyle = 'black';
+				} else {
+					ctx.fillStyle = 'yellow';
+				}
+			} else if (Circle.entity == 2) {
+				ctx.fillStyle = 'blue';
+			} else if (Circle.entity == 3) {
+				ctx.fillStyle = 'red';
+			}
+			
+			ctx.beginPath();
+			ctx.arc(x, y, Circle.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.stroke();
+			
+			/*
+			
+                      ctx.beginPath();
+                      ctx.arc(Board.Foods[i].x,Board.Foods[i].y,5,0,2*Math.PI);
+                      ctx.fill();
+                      ctx.stroke();
+			*/
+		}	
+	},
+	initialize_demo1: function() {
+		this.Active_Circles = [];
+		
+		// Clear board
+		var ctx = document.querySelector('canvas').getContext('2d');
+		ctx.clearRect(0,0,Board2.Size[0],Board2.Size[1]);
+		
+		// Create Player Circle
+		var Plr = new Circle2();
+		Plr.pos = [350, 350];
+		Plr.radius = 10;
+		Plr.entity = 1;
+		Plr.user_id = Meteor.userId();
+		this.Active_Circles.push(Plr)
+		
+		// Create Dummy Player (Bigger)
+		var D1 = new Circle2();
+		D1.pos = [125, 375];
+		D1.radius = 50;
+		D1.entity = 1;
+		D1.isDummy = true;
+		this.Active_Circles.push(D1)
+		
+		var D2 = new Circle2();
+		D2.pos = [375, 125];
+		D2.radius = 10;
+		D2.entity = 1;
+		D2.isDummy = true;
+		this.Active_Circles.push(D2)
+		
+		// Create food
+		for (var i = 0; i < 200; i++) {
+			var F = new Circle2();
+			var x = Math.ceil(Math.random()*980) + 5;
+			var y = Math.ceil(Math.random()*980) + 5;
+			F.entity = 3;
+			F.radius = 5;
+			F.pos = [x, y];
+			this.Active_Circles.push(F)
+		}
+		
+		// Create powerup
+		for (var i = 0; i < 50; i++) {
+			var P = new Circle2();
+			var x = Math.ceil(Math.random()*480) + 5;
+			var y = Math.ceil(Math.random()*480) + 5;
+			F.entity = 2;
+			F.powerup = 1;
+			F.radius = 5;
+			F.pos = [x, y];
+			this.Active_Circles.push(F)
+		}
+		
+		// Begin the game
+		Session.set('GameState', 'Playing');
+		GameIntervalDemo = setInterval(this.performTick, DELTAT*1000);
+	},
+	performTick: function() {
+		console.log('NEW LOOP');
+		if (Session.get('GameState') == 'Over') {
+			clearInterval(GameIntervalDemo);
+		}
+		Board2.drawBoard();
+		Board2.doAllMove();
+		Board2.detectAllCollisions();
+		Board2.runPowerups();
+		Board2.determineGameOver();
+	}
+		
+};
+
+$(function() {
+	// Set up event listener
+
+	document.addEventListener('keydown',function(e){
+		KeyMap[e.keyCode] = 1;
+	});
+	document.addEventListener('keyup', function(e){
+		KeyMap[e.keyCode] = 0;
+	});
+});
 
             var Board={
                 Foods:[], //Array to store pixels
@@ -128,6 +393,7 @@
 
                 })();
             }
+			/*
 			$(function(){
             init();
-        });
+        });*/

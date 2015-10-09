@@ -1,5 +1,20 @@
 var Apple = 10;
 
+function Circle2() {
+	this.pos = [0, 0];
+	this.vel = [0, 0];
+	this.speed = 100;
+	this.radius = 5;
+	this.powerup = 0;
+	this.pu_active = 0;
+	this.user_id = "";
+	this.entity = 0;
+	this.game_over_flag = false;
+	this.isDummy = false
+}
+	
+
+
 function Circle(){
 	this.x=250;
 	this.y=250;
