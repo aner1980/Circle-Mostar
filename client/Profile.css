@@ -1,0 +1,94 @@
+.ability-entry {
+	display: inline-block;
+	position: relative;
+	float: left;
+	width: 450px;
+	height: 100px;
+	margin-top: 10px;
+	cursor: pointer;
+}
+
+.ability-entry:hover {
+	background-color: #DDD;
+}
+
+.a-icon {
+	position: absolute;
+	top: 0px;
+	left: 10px;
+	width: 100px;
+	height: 100px;
+}
+
+.dets {
+	position: absolute;
+	top: 0px;
+	left: 120px;
+	width: 320px;
+	height: 100px;
+}
+
+.a-name {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 320px;
+	height: 22px;
+	font-size: 22px;
+	font-weight: bold;
+	line-height: 22px;
+}
+
+.a-desc {
+	position: absolute;
+	top: 25px;
+	left: 0px;
+	width: 320px;
+}
+
+#mask {
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	z-index: 100;
+	background-color: rgba(0,0,0,0.5);
+}
+
+#ability-list {
+	z-index: 101;
+	width: 920px;
+	height: 500px;
+	overflow-y: auto;
+	position: fixed;
+	margin-left: -460px;
+	margin-top: -250px;
+	top: 50%;
+	left: 50%;
+	border: 1px solid black;
+	border-radius: 15px;
+	background-color: white;
+	overflow-x: hidden;
+}
+
+#ability-select {
+	position: absolute;
+	top: 44px;
+	right: 50px;
+	width: 250px;
+	height: 200px;
+	background-color: white;
+	border: 1px solid black;
+	padding: 10px;
+}
+
+.abil {
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
+	margin-bottom: auto;
+	width: 100px;
+	height: 100px;
+	cursor: pointer;
+}

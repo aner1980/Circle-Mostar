@@ -249,8 +249,8 @@ var Board2 = {
 		// Create powerup
 		for (var i = 0; i < 50; i++) {
 			var P = new Circle2();
-			var x = Math.ceil(Math.random()*1480) + 5;
-			var y = Math.ceil(Math.random()*830) + 5;
+			var x = Math.ceil(Math.random()*500) + 5 + 500;
+			var y = Math.ceil(Math.random()*500) + 5 + 200;
 			F.entity = 2;
 			F.powerup = 1;
 			F.radius = 5;

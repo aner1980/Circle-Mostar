@@ -1,0 +1,1 @@
+Abilities = new Mongo.Collection('Abilities');

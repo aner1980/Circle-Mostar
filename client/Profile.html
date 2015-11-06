@@ -11,9 +11,17 @@
 		
 		
 	{{#if currentUser}}
+		{{#if choosingAbility}}
+			{{> choose_ability}}
+		{{/if}}
 		<ul>
 			{{> prof}}
 		</ul>
+		<div id="ability-select">
+			<h3>My Abilities</h3>
+			<img class="abil" id="abil-sel-1" src="{{getAbility 1}}" />
+			<img class="abil" id="abil-sel-2" src="{{getAbility 2}}" />
+		</div>
 	{{/if}}
 
 	</div>
@@ -22,8 +30,27 @@
 <template name="prof">
   <ul>
 	<li>Name: {{currentUser.username}}</li>
-	<li>Top Score: {{currentUser.TopScore}}</li>
-	<li>Power Ups: {{currentUser.PowerUps}}</li>
-	<li>Currency: {{currentUser.Currency}}</li>
+	<li>Top Score: {{currentUser.profile.TopScore}} Points</li>
+	<li>Currency: {{currentUser.profile.currency}} Stars</li>
   </ul>
 </template>
+
+<template name="ability_entry">
+	<div class="ability-entry" id="{{aid}}">
+		<img class="a-icon" src="{{icon}}" />
+		<div class="dets">
+			<span class="a-name">{{name}}</span>
+			<span class="a-desc">{{desc}}</span>
+		</div>
+	</div>
+</template>
+
+<template name="choose_ability">
+	<div id="mask"></div>
+	<div id="ability-list">
+		{{#each abilities}}
+			{{> ability_entry}}
+		{{/each}}
+	</div>
+</template>
+		
