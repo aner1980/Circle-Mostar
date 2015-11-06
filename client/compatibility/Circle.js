@@ -21,7 +21,7 @@ function Circle2() {
 }
 	
 
-
+/*
 function Circle(){
 	this.x=250;
 	this.y=250;
@@ -117,4 +117,4 @@ function Circle(){
 			return false;
 		}
 	}
-}
+}*/

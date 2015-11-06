@@ -4,6 +4,8 @@ var FOOD_RADIUS_INCREASE = 3;
 var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
+var GameBoard = new Mongo.Collection('game_board');
+
 
 function performMove(Circle, dt) {
 	// Change velocity for user circle
@@ -222,59 +224,22 @@ var Board2 = {
 			*/
 		}	
 	},
+
 	initialize_demo1: function() {
-		this.Active_Circles = [];
-		
+		this.Active_Circles = GameBoard.findOne().ActiveCircles;
+		console.log( GameBoard.findOne());
 		// Clear board
 		var ctx = document.querySelector('canvas').getContext('2d');
 		ctx.clearRect(0,0,Board2.Size[0],Board2.Size[1]);
 		
 		// Create Player Circle
 		var Plr = new Circle2();
-		Plr.pos = [350, 350];
+		Plr.pos = [Math.ceil(Math.random()*1480) + 5, Math.ceil(Math.random()*830) + 5];
 		Plr.radius = 30;
 		Plr.entity = 1;
 		Plr.user_id = Meteor.userId();
 		this.Active_Circles.push(Plr)
-		
-		// Create Dummy Player (Bigger)
-		var D1 = new Circle2();
-		D1.pos = [125, 375];
-		D1.radius = 50;
-		D1.entity = 1;
-		D1.isDummy = true;
-		this.Active_Circles.push(D1)
-		
-		var D2 = new Circle2();
-		D2.pos = [375, 125];
-		D2.radius = 20;
-		D2.entity = 1;
-		D2.isDummy = true;
-		this.Active_Circles.push(D2)
-		
-		// Create food
-		for (var i = 0; i < 200; i++) {
-			var F = new Circle2();
-			var x = Math.ceil(Math.random()*1480) + 5;
-			var y = Math.ceil(Math.random()*830) + 5;
-			F.entity = 3;
-			F.radius = 5;
-			F.pos = [x, y];
-			this.Active_Circles.push(F)
-		}
-		
-		// Create powerup
-		for (var i = 0; i < 50; i++) {
-			var P = new Circle2();
-			var x = Math.ceil(Math.random()*500) + 5 + 500;
-			var y = Math.ceil(Math.random()*500) + 5 + 200;
-			F.entity = 2;
-			F.powerup = 1;
-			F.radius = 5;
-			F.pos = [x, y];
-			this.Active_Circles.push(F)
-		}
-		
+		GameBoard.update({_id: GameBoard.findOne()._id}, {ActiveCircles: Board2.Active_Circles});
 		// Begin the game
 		Session.set('GameState', 'Playing');
 		TotalTimePlayed = 0;
@@ -287,12 +252,13 @@ var Board2 = {
 		}
 		TotalTimePlayed += DELTAT;
 		$("#game-time-text").text(getTimePlayed());
-		
+		Board2.Active_Circles = GameBoard.findOne().ActiveCircles;
 		Board2.drawBoard();
 		Board2.doAllMove();
 		Board2.detectAllCollisions();
 		Board2.runPowerups();
 		Board2.determineGameOver();
+		GameBoard.update({_id: GameBoard.findOne()._id}, {ActiveCircles: Board2.Active_Circles});
 	}
 		
 };
@@ -321,6 +287,7 @@ $(function() {
 		KeyMap[e.keyCode] = 0;
 	});
 });
+/*
 
             var Board={
                 Foods:[], //Array to store pixels
@@ -450,7 +417,7 @@ $(function() {
                     }
 
                 })();
-            }
+            }*/
 			/*
 			$(function(){
             init();
