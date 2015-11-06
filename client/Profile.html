@@ -1,23 +1,23 @@
 <template name="profile_page">
-	<div class="container">
-	<header>
-		<h1>Profile</h1>
+  <div class="container">
+    <div class="page-header">
+	  <h2>Profile</h2>
 		{{> loginButtons}} 
-	</header>
-	<div class="logo">
-    	  <div>
-        	Circle MonStar
-    	  </div>
-  	</div>
-		
-		
-	{{#if currentUser}}
+	</div> 	
+
+
+	<div class="profile_contain">	
+	  {{#if currentUser}}
+	  <div class="row">
 		<ul>
 			{{> prof}}
 		</ul>
-	{{/if}}
+	  </div>
 
+	  {{/if}}
 	</div>
+
+  </div>	
 </template>
 
 <template name="prof">

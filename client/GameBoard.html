@@ -1,12 +1,40 @@
 <body>  
+	
     {{> site}}
+    {{> text}}
 </body>
 
+<template name="text">
+	<div class="logotext">
+		<h1>
+          Circle MonStar
+        </h1>
+    </div>
+</template>
+
 <template name="site">
-	<div id="header-nav">
-		<span id="to-game" class="nav">Play</span><span id="to-profile" class="nav">Profile</span>
-		{{> loginButtons}}
-	</div>
+  <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#">Welcome to Circle-MonStar</a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav">
+ 
+        <li><span id="to-game" >Home</span></li>
+        <li><span id="to-game"> <div class="col-xs-12" style="height:50px;"></div>  Play</span></li>
+        <li><span id="to-profile" >Profile</span></li>
+        <li><span id="to-game"> <div class="col-xs-12" style="height:50px;"></div>  How to play</span></li>
+        
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+
+
+
 
 	{{#if currentUser}}
 		{{#if pageIs "Game"}}
@@ -35,6 +63,6 @@
 <template name="gameOver">
 		<div class="g-popup game-start">
 			<span class="GOVER">Game Over</span><br />
-			<button type="button">Play Again</button>
+			<button type="button"> <h1>Play Again</h1></button>
 		</div>
 </template>

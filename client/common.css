@@ -1,41 +1,9 @@
-.GOVER {
-	color: red;
-	font-size: 24px;
-	text-align: center;
-	width: 100%;
-}
+
 
 .nav {
 	cursor: pointer;
 	color: white;
 	font-size: 18px;
-}
-
-.g-popup {
-	position: fixed;
-	height: 300px;
-	width: 500px;
-	top: 50%;
-	margin-top: -150px;
-	left: 50%;
-	margin-left: -250px;
-	background-color: white;
-	z-index: 10;
-	text-align: center;
-	border: 1px solid black;
-}
-
-.g-popup button {
-	position: relative;
-	width: 250px;
-	height: 50px;
-	line-height: 50px;
-	font-size: 25px;
-	margin-left: 125px;
-	background-color: #0074BD;
-	color: white;
-	bottom: 0px;
-	cursor: pointer;
 }
 
 #header-nav {
@@ -50,18 +18,11 @@
 	line-height: 45px;
 }
 
-canvas {
-	background-color: white;
-	margin: 0 auto;
-	display: block;
+
+container {
+  background: #FFFFFF;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  min-height: 100%;
-  background: white;
-}
 
 header {
   background: #d2edf4;
@@ -109,14 +70,6 @@ a {
 	background-repeat: repeat;
 
 }
-.container {
-	width: 80%;
-	max-width: 1260px;
-	min-width: 780px;
-	background-image: url('pics/background1.jpg');
-	background-size: cover;
-	margin: 0 auto;
-}
 
 .img{
 	width: 50%;
@@ -152,12 +105,12 @@ a {
 
 .logo{
 	position: absolute;
-	top: calc(50% - 35px);
+	top: calc(40% - 35px);
 	left: calc(38% - 255px);
 	z-index: 2;
 	font-family: "Times New Roman", Times, serif;
 	font-size: 55px;
-	color: #fff;
+	color: #0f0;
 	
 }
 
@@ -291,4 +244,112 @@ ul.nav a:hover, ul.nav a:active, ul.nav a:focus {
 	height:0;
 	font-size: 1px;
 	line-height: 0px;
+}
+
+
+
+.g-popup {
+  margin: 0 auto;
+  background: rgba(255,255,255,0.2);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+
+	position: fixed;
+	height: 200px;
+	width: 500px;
+	top: 50%;
+	margin-top: -150px;
+	left: 50%;
+	margin-left: -250px;
+
+	z-index: 10;
+	text-align: center;
+	border: 2px solid black;
+	-webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+           border-radius: 8px;
+}
+
+.g-popup button {
+	position: relative;
+
+	border: solid 1px rgba(162,235,229,1);
+   -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+           border-radius: 8px;
+
+	width: 250px;
+	height: 60px;
+	line-height: 50px;
+	font-size: 25px;
+
+	background: white;
+	bottom: 0px;
+	cursor: pointer;
+}
+
+.g-popup h1 {
+text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: orange;
+  margin: 5px 0;
+}
+
+canvas {
+	background: repeating-radial-gradient(
+  circle,
+  #5E575F,
+  #5E575F 20px,
+  #4b026f 20px, 
+  #4b026f 40px
+);
+	margin: 0 auto;
+	display: block;
+}
+
+.GOVER {
+	color: #EDCA7A;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 34px;
+	text-align: center;
+	width: 100%;
+	padding: 35px;
+}
+
+.profile_contain {
+  max-width:900px;
+  margin: 0 auto;
+  min-height: 800px;
+  opacity: 0.8;
+  background: repeating-linear-gradient(
+  45deg,
+  #76653F,
+  #76653F 40px,
+  #465298 40px,
+  #465298 80px
+  );
+}
+
+.profile_contain ul{
+	color: white;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 24px;
+}
+
+
+.logotext {
+	margin-left: auto;
+    margin-right: auto;
+
+}
+
+.logotext h1 {
+	padding-top: 15%;
+	text-align: center;
+	color: white;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 94px;
 }
