@@ -16,8 +16,21 @@
 				{{#if gameStateIs "Over"}}
 					{{> gameOver}}
 				{{/if}}
-			<canvas width="1000" height="750" style="border:1px solid black">
-			</canvas>
+			<div class="game-area">
+				<canvas class="ui-element" width="1500" height="850" style="border:1px solid black">
+				</canvas>
+				<div class="ui-element" id="game-time">
+					<span id="game-time-text">0:00</span>
+				</div>
+				<div class="ui-element" id="game-actives">
+					<img class="ui-element a-slot" id="slot-powerup" src="{{getPowerupIcon}}" />
+					<img class="ui-element a-slot" id="slot-abil1" src="/powerup-empty.png" />
+					<img class="ui-element a-slot" id="slot-abil2" src="/powerup-empty.png" />
+					<span class="ui-element keybind" id="kb-p">SP</span>
+					<span class="ui-element keybind" id="kb-a1">D</span>
+					<span class="ui-element keybind" id="kb-a2">F</span>
+				</div>
+			</div>
 		{{/if}}
 		{{#if pageIs "Profile"}}
 			{{> profile_page}}

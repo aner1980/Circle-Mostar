@@ -11,6 +11,8 @@ function Circle2() {
 	this.entity = 0;
 	this.game_over_flag = false;
 	this.isDummy = false
+	this.players_eaten = 0;
+	this.food_eaten = 0;
 }
 	
 

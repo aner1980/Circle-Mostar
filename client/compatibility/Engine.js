@@ -3,6 +3,7 @@ var RADIUS_DELAY_PS = 3; // per second
 var FOOD_RADIUS_INCREASE = 3;
 var GameIntervalDemo = null;
 var KeyMap = [];
+var TotalTimePlayed = 0;
 
 function performMove(Circle, dt) {
 	// Change velocity for user circle
@@ -25,7 +26,7 @@ function performMove(Circle, dt) {
 			userVel[1] += 1;
 		}
 		Circle.vel = userVel;
-		console.log(userVel);
+		//console.log(userVel);
 	}
 	Circle.pos[0] += Circle.vel[0] * Circle.speed * dt;
 	Circle.pos[1] += Circle.vel[1] * Circle.speed * dt;
@@ -39,9 +40,9 @@ function checkCollide(Circle1, Circle2) {
 	var collideDist = Circle1.radius + Circle2.radius - Math.min(Circle1.radius, Circle2.radius)/2;
 	
 	if (mag <= collideDist && (Circle1.entity == 1 || Circle2.entity == 1) && (Circle1.radius > 0 && Circle2.radius > 0)) {
-		console.log("COLLISION!");
-		console.log(Circle1);
-		console.log(Circle2);
+		//console.log("COLLISION!");
+		//console.log(Circle1);
+		//console.log(Circle2);
 		// Consume!
 		if (Circle1.entity == 1 && Circle2.entity != 1) {
 			consumeOrGather(Circle1, Circle2);
@@ -67,7 +68,8 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 		// Consumed POWERUP
 		if (OwnerCircle.powerup == 0) {
 			OwnerCircle.powerup = UsedCircle.powerup;
-			OwnerCircle.pu_active = Powerups[OwnerCircle.powerup].duration;
+			OwnerCircle.pu_active = -1; //Powerups[OwnerCircle.powerup].duration;
+			Session.set('PowerupIcon', Powerups[OwnerCircle.powerup].icon);
 		}
 	} else if (UsedCircle.entity == 3) {
 		// Consumed FOOD
@@ -76,11 +78,27 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 	UsedCircle.radius = 0;
 }
 
-var Powerups = [ {}, {name: "speed", duration: 5, bonus: 60} ]
+var Powerups = [ {icon: '/powerup-empty.png'}, {name: "speed", duration: 5, bonus: 60, icon: '/powerup-speed.png'} ]
 
 var Board2 = {
 	Active_Circles: [], // Array to store circles
-	Size: [1000, 750],
+	Size: [1500, 850],
+	getCircleFromUserID: function(uid)  {
+		for (var i = 0; i < this.Active_Circles.length; i++) {
+			var Circ = this.Active_Circles[i];
+			if (Circ.user_id == uid) {
+				return Circ;
+			}
+		}
+		return null;
+	},
+	activatePowerup: function(circle) {
+		var pid = circle.powerup;
+		if (pid > 0 && Powerups[pid] && circle.pu_active == -1) {
+			circle.pu_active = Powerups[pid].duration;
+			Session.set('PowerupIcon', '/powerup-empty.png');
+		}
+	},
 	doAllMove: function() {
 //		console.log(this);
 		for (var i = 0; i < this.Active_Circles.length; i++) {
@@ -112,6 +130,8 @@ var Board2 = {
 							Circle.speed += Powerups[1].bonus;
 							break;
 					}
+				} else if (Circle.pu_active == -1) {
+					continue;
 				} else if (Circle.pu_active <= 0) {
 					switch (powerup) {
 						case 1: 
@@ -218,8 +238,8 @@ var Board2 = {
 		// Create food
 		for (var i = 0; i < 200; i++) {
 			var F = new Circle2();
-			var x = Math.ceil(Math.random()*980) + 5;
-			var y = Math.ceil(Math.random()*980) + 5;
+			var x = Math.ceil(Math.random()*1480) + 5;
+			var y = Math.ceil(Math.random()*830) + 5;
 			F.entity = 3;
 			F.radius = 5;
 			F.pos = [x, y];
@@ -229,8 +249,8 @@ var Board2 = {
 		// Create powerup
 		for (var i = 0; i < 50; i++) {
 			var P = new Circle2();
-			var x = Math.ceil(Math.random()*480) + 5;
-			var y = Math.ceil(Math.random()*480) + 5;
+			var x = Math.ceil(Math.random()*1480) + 5;
+			var y = Math.ceil(Math.random()*830) + 5;
 			F.entity = 2;
 			F.powerup = 1;
 			F.radius = 5;
@@ -240,13 +260,17 @@ var Board2 = {
 		
 		// Begin the game
 		Session.set('GameState', 'Playing');
+		TotalTimePlayed = 0;
 		GameIntervalDemo = setInterval(this.performTick, DELTAT*1000);
 	},
 	performTick: function() {
-		console.log('NEW LOOP');
+		//console.log('NEW LOOP');
 		if (Session.get('GameState') == 'Over') {
 			clearInterval(GameIntervalDemo);
 		}
+		TotalTimePlayed += DELTAT;
+		$("#game-time-text").text(getTimePlayed());
+		
 		Board2.drawBoard();
 		Board2.doAllMove();
 		Board2.detectAllCollisions();
@@ -256,11 +280,25 @@ var Board2 = {
 		
 };
 
+function getTimePlayed() {
+	var mins = Math.floor(TotalTimePlayed/60);
+	var secs = (Math.floor(TotalTimePlayed) % 60);
+	return mins + ":" + (secs<10 ? "0"+secs : secs);
+}
+
 $(function() {
 	// Set up event listener
 
 	document.addEventListener('keydown',function(e){
 		KeyMap[e.keyCode] = 1;
+		
+		// SPACEBAR -- ACTIVATE OBTAINED POWERUP
+		if (e.keyCode == 32) {
+			var myCirc = Board2.getCircleFromUserID(Meteor.userId());
+			if (myCirc) {
+				Board2.activatePowerup(myCirc);
+			}
+		}
 	});
 	document.addEventListener('keyup', function(e){
 		KeyMap[e.keyCode] = 0;

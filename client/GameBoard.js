@@ -10,6 +10,9 @@ Template.site.helpers({
 			return true;
 		}
 		return false;
+	},
+	getPowerupIcon: function() {
+		return Session.get('PowerupIcon')
 	}
 });
 
@@ -41,4 +44,5 @@ Template.gameOver.events({
 $(function() {
 	Session.set('CurrentPage', 'Game');
 	Session.set('GameState', 'NotStarted');
+	Session.set('PowerupIcon', '/powerup-empty.png');
 });
