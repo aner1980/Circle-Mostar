@@ -53,3 +53,9 @@ Template.ability_entry.events({
 		Session.set('ProfileOp', '');
 	}
 });
+
+Template.achievements.helpers({
+	achievements: function() {
+		return Achievements.find({id: {$in: Meteor.user().profile.achievements}});
+	}
+});

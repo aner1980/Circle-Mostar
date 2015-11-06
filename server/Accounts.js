@@ -8,3 +8,9 @@ Accounts.onCreateUser(function(options, user) {
 	user.experience = 0;
 	return user;
 });
+
+Meteor.users.allow({
+	update: function() {
+		return true;
+	}
+});

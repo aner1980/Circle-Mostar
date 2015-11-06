@@ -64,6 +64,12 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 	if (UsedCircle.entity == 1) {
 		// Consumed PLAYER
 		OwnerCircle.radius += UsedCircle.radius / 2;
+		OwnerCircle.players_eaten += 1;
+		
+		if (UsedCircle.powerup == 1 && UsedCircle.pu_active > 0) {
+			UsedCircle.died_while_speeding += 1;
+		}
+		UsedCircle.died_from_consumption = 1;
 	} else if (UsedCircle.entity == 2) {
 		// Consumed POWERUP
 		if (OwnerCircle.powerup == 0) {
@@ -74,6 +80,7 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 	} else if (UsedCircle.entity == 3) {
 		// Consumed FOOD
 		OwnerCircle.radius += FOOD_RADIUS_INCREASE;
+		OwnerCircle.food_eaten += 1;
 	}
 	UsedCircle.radius = 0;
 }
@@ -97,6 +104,10 @@ var Board2 = {
 		if (pid > 0 && Powerups[pid] && circle.pu_active == -1) {
 			circle.pu_active = Powerups[pid].duration;
 			Session.set('PowerupIcon', '/powerup-empty.png');
+			
+			if (pid == 1) {
+				circle.speed_powerup = 1;
+			}
 		}
 	},
 	doAllMove: function() {
@@ -154,7 +165,13 @@ var Board2 = {
 			} else {
 				console.log('GAME OVER');
 				if (Circle.user_id == Meteor.userId()) {
+					achvCheck(Circle);
 					Session.set('GameState', 'Over');
+					
+					var xp = 50 + 5 * Circle.food_eaten + 15 * Circle.players_eaten;
+					var currency = 200 + 5 * Circle.food_eaten + 20 * Circle.players_eaten;
+					
+					Meteor.users.update(Circle.user_id, {$inc: {experience: xp, 'profile.currency': currency}});
 				}
 			}
 		}

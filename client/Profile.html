@@ -22,6 +22,7 @@
 			<img class="abil" id="abil-sel-1" src="{{getAbility 1}}" />
 			<img class="abil" id="abil-sel-2" src="{{getAbility 2}}" />
 		</div>
+		{{> achievements}}
 	{{/if}}
 
 	</div>
@@ -53,4 +54,16 @@
 		{{/each}}
 	</div>
 </template>
-		
+
+<template name="achievements">
+	<h3>My Achievements</h3>
+	<ul>
+		{{#each achievements}}
+			{{> achievement_entry}}
+		{{/each}}
+	</ul>
+</template>
+
+<template name="achievement_entry">
+	<li>{{achievement}} - {{description}}</li>
+</template>

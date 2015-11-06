@@ -13,6 +13,11 @@ function Circle2() {
 	this.isDummy = false
 	this.players_eaten = 0;
 	this.food_eaten = 0;
+	this.speed_powerup = 0;
+	this.died_while_speeding = 0;
+	this.died_from_consumption = 0;
+	this.consumed_multiple_players = 0;
+	this.failed_consumption = 0;
 }
 	
 
