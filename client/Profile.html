@@ -1,29 +1,32 @@
 <template name="profile_page">
 	<div class="container">
-	<header>
-		<h1>Profile</h1>
-	</header>
+		<div class="page-header">
+			<h1 class="black">Profile</h1>
+		</div>
+		
+		<!--
 	<div class="logo">
     	  <div>
         	Circle MonStar
     	  </div>
   	</div>
-		
-		
-	{{#if currentUser}}
-		{{#if choosingAbility}}
-			{{> choose_ability}}
-		{{/if}}
-		<ul>
-			{{> prof}}
-		</ul>
-		<div id="ability-select">
-			<h3>My Abilities</h3>
-			<img class="abil" id="abil-sel-1" src="{{getAbility 1}}" />
-			<img class="abil" id="abil-sel-2" src="{{getAbility 2}}" />
+		-->
+	
+		<div class="profile_contain">
+			{{#if currentUser}}
+				{{#if choosingAbility}}
+					{{> choose_ability}}
+				{{/if}}
+				<h2 class="black">Details &amp; Stats</h2>
+				{{> prof}}
+				<div id="ability-select">
+					<h2 class="black">My Abilities</h2>
+					<img class="abil" id="abil-sel-1" src="{{getAbility 1}}" />
+					<img class="abil" id="abil-sel-2" src="{{getAbility 2}}" />
+				</div>
+				{{> achievements}}
+			{{/if}}
 		</div>
-		{{> achievements}}
-	{{/if}}
 
 	</div>
 </template>
@@ -56,7 +59,7 @@
 </template>
 
 <template name="achievements">
-	<h3>My Achievements</h3>
+	<h2 class="black">My Achievements</h2>
 	<ul>
 		{{#each achievements}}
 			{{> achievement_entry}}

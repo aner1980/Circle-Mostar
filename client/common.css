@@ -1,3 +1,381 @@
+
+
+.nav {
+	cursor: pointer;
+	color: white;
+	font-size: 18px;
+}
+
+#header-nav {
+	height: 45px;
+	background-color: rgba(200, 200, 200, 0.5);
+}
+
+#header-nav span {
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 45px;
+	line-height: 45px;
+}
+
+
+container {
+  background: #FFFFFF;
+}
+
+.log-btns {
+	position: absolute;
+	right: 20px;
+	top: 10px;
+	text-align: right;
+	background: transparent;
+	z-index: 2;
+	display: inline-block;
+	width: 250px;
+}
+
+header {
+  background: #d2edf4;
+  background-image: linear-gradient(to bottom, #d0edf5, #e1e5f0 100%);
+  padding: 20px 15px 15px 15px;
+  position: relative;
+}
+
+
+body {
+	margin: 0;
+  	padding: 0;
+	background-image: url("http://petaimg.com/wp-content/uploads/2015/09/blue-background-wallpaper-high-resolution.jpg");
+	background-size: cover;
+}
+
+body, td, th {
+	color: #666633;
+}
+
+h1, h2 {
+	color: #663300;
+}
+
+h3, h4, h5, h6 {
+	color: #996633;
+}
+center {
+	position: absolute;
+	top: calc(50% - 75px);
+	left: calc(50% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 2;
+	font-family: "Times New Roman", Times, serif;
+}
+a {
+  color: #996633;
+}
+.gallery_img{
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	background-repeat: repeat;
+
+}
+
+.img{
+	width: 50%;
+  	height: 15em;
+  	margin: 0 auto;
+  	overflow: hidden;
+	background-size: length|cover
+}
+
+.img2{
+	width: 50%;
+  	height: 15em;
+  	margin: 0 auto;
+  	overflow: hidden;
+	background-size: auto|length|cover
+}
+
+.img3{
+	background-size: cover; 
+	position: fixed;
+	background-size: auto|length|cover
+}
+
+.img4{
+	background-size: cover;
+}
+.img5{
+	background-size: cover; 
+}
+.header {
+	background: #6F7D94;
+}
+
+.logo{
+	position: absolute;
+	top: calc(40% - 35px);
+	left: calc(38% - 255px);
+	z-index: 2;
+	font-family: "Times New Roman", Times, serif;
+	font-size: 55px;
+	color: #0f0;
+	
+}
+
+.sidebar1 {
+	float: right;
+	width: 25%;
+	background: #background: #666633;;
+	padding-bottom: 10px;
+}
+.content {
+
+	position: absolute;
+	top: calc(50% - 75px);
+	left: calc(50% - 50px);
+	height: 150px;
+	width: 350px;
+	padding: 10px;
+	z-index: 2;
+}
+
+.content input[type=text]{
+	width: 250px;
+	height: 30px;
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.6);
+	border-radius: 2px;
+	color: #fff;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 4px;
+}
+
+.content input[type=password]{
+	width: 250px;
+	height: 30px;
+	background: transparent;
+	border: 1px solid rgba(255,255,255,0.6);
+	border-radius: 2px;
+	color: #fff;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 4px;
+	margin-top: 10px;
+}
+
+.content input[type=button]:hover{
+	opacity: 0.8;
+}
+.content input[type=text]:focus{
+	outline: none;
+	border: 1px solid rgba(255,255,255,0.9);
+}
+
+.content input[type=password]:focus{
+	outline: none;
+	border: 1px solid rgba(255,255,255,0.9);
+}
+
+.content input[type=submit]{
+	width: 250px;
+	height: 35px;
+	background: #fff;
+	border: 1px solid #fff;
+	cursor: pointer;
+	border-radius: 2px;
+	color: #a18d6c;
+	font-family: 'Exo', sans-serif;
+	font-size: 16px;
+	font-weight: 400;
+	padding: 6px;
+	margin-top: 10px;
+}
+
+.content input[type=submit]:hover{
+	opacity: 0.8;
+}
+
+.content input[type=submit]:focus{
+	outline: none;
+}
+
+::-webkit-input-placeholder{
+   color: rgba(255,255,255,0.6);
+}
+
+::-moz-input-placeholder{
+   color: rgba(255,255,255,0.6);
+}
+.content ul, .content ol { 
+	padding: 0 15px 15px 40px; 
+}
+
+ul.nav {
+	list-style: none;
+	border-top: 1px solid #666;
+	margin-bottom: 15px; 
+}
+ul.nav li {
+	border-bottom: 1px solid #666; 
+}
+ul.nav a, ul.nav a:visited { 
+	padding: 5px 5px 5px 15px;
+	display: block;
+	text-decoration: none;
+	background: #c0b895;
+	color: #663300;
+}
+ul.nav a:hover, ul.nav a:active, ul.nav a:focus { 
+	background: #996633;
+	color: #FFF;
+}
+
+.header {
+	padding: 5px 0;
+	background-size: cover;
+	background-image: url('oops.jpg');
+}
+
+.fltrt { 
+	float: right;
+	margin-left: 8px;
+}
+.fltlft { 
+	float: left;
+	margin-right: 8px;
+}
+.clearfloat { 
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0px;
+}
+
+
+
+.g-popup {
+  margin: 0 auto;
+  background: rgba(128,128,255,1);
+  padding: 35px;
+  border: 2px solid #fff;
+  border-radius: 20px/50px;
+  background-clip: padding-box;
+  text-align: center;
+
+	position: absolute;
+	height: 200px;
+	width: 500px;
+	top: 50%;
+	margin-top: -150px;
+	left: 50%;
+	margin-left: -250px;
+
+	z-index: 10;
+	text-align: center;
+	border: 2px solid black;
+	-webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+           border-radius: 8px;
+}
+
+.g-popup button {
+	position: relative;
+
+	border: solid 1px rgba(162,235,229,1);
+   -webkit-border-radius: 8px;
+      -moz-border-radius: 8px;
+           border-radius: 8px;
+
+	width: 250px;
+	height: 60px;
+	line-height: 50px;
+	font-size: 25px;
+
+	background: white;
+	bottom: 0px;
+	cursor: pointer;
+}
+
+.g-popup h1 {
+text-align: center;
+  font-family: Tahoma, Arial, sans-serif;
+  color: orange;
+  margin: 5px 0;
+}
+
+canvas {
+	background: repeating-radial-gradient(
+  circle,
+  rgba(94, 87, 95, 0.5),
+  rgba(94, 87, 95, 0.5) 20px,
+  rgba(75, 2, 111, 0.5) 20px, 
+  rgba(75, 2, 111, 0.5) 40px
+  );
+
+/*
+	background: repeating-radial-gradient(
+  circle,
+  #5E575F,
+  #5E575F 20px,
+  #4b026f 20px, 
+  #4b026f 40px
+);
+*/
+	margin: 0 auto;
+	display: block;
+}
+
+.GOVER {
+	color: #EDCA7A;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 34px;
+	text-align: center;
+	width: 100%;
+	padding: 35px;
+}
+
+.profile_contain {
+  max-width:900px;
+  margin: 0 auto;
+  min-height: 800px;
+  opacity: 0.8;
+  background: repeating-linear-gradient(
+  45deg,
+  #76653F,
+  #76653F 40px,
+  #465298 40px,
+  #465298 80px
+  );
+}
+
+.profile_contain ul{
+	color: white;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 24px;
+}
+
+
+.logotext {
+	margin-left: auto;
+    margin-right: auto;
+
+}
+
+.logotext h1 {
+	padding-top: 15%;
+	text-align: center;
+	color: white;
+	font-family: Tahoma, Arial, sans-serif;
+	font-size: 94px;
+}
+
+/*
+
 .GOVER {
 	color: red;
 	font-size: 24px;
@@ -292,3 +670,5 @@ ul.nav a:hover, ul.nav a:active, ul.nav a:focus {
 	font-size: 1px;
 	line-height: 0px;
 }
+
+*/

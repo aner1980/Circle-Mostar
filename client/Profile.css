@@ -74,7 +74,7 @@
 
 #ability-select {
 	position: absolute;
-	top: 44px;
+	top: 142px;
 	right: 50px;
 	width: 250px;
 	height: 200px;
@@ -91,4 +91,12 @@
 	width: 100px;
 	height: 100px;
 	cursor: pointer;
+}
+
+.black {
+	color: black;
+}
+
+.profile_contain {
+	padding: 15px;
 }
