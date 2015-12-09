@@ -1,6 +1,12 @@
-var GameBoard = new Mongo.Collection('game_board');
+/*
+var User = new Mongo.Collection('Players');
+var Food = new Mongo.Collection('Foods');
+var PowerUp = new Mongo.Collection('Powerups');
+/**/
 
-function Circle2() {
+var PowerupTable = [ {icon: '/powerup-empty.png'}, {name: "speed", duration: 5, bonus: 60, icon: '/powerup-speed.png'} ];
+
+function Circle() {
 	this.pos = [0, 0];
 	this.vel = [0, 0];
 	this.speed = 100;
@@ -18,47 +24,78 @@ function Circle2() {
 	this.died_from_consumption = 0;
 	this.consumed_multiple_players = 0;
 	this.failed_consumption = 0;
+	this.is_playing = false;
 };
 
+Meteor.methods({
+	startGame: function() {
+		if(this.userId==null) {
+			throw new Meteor.Error("logged-out", "The user must be logged in to start new game.");
+		}
+		var currentUser = user.findOne();
+		var newPlayer = new Circle();
+		newPlayer.pos = [Math.ceil(Math.random()*1480) + 5, Math.ceil(Math.random()*830) + 5];
+		newPlayer.radius = 30;
+		newPlayer.entity = 1;
+		newPlayer.user_id = this.userId;
+		newPlayer.is_playing = true;
+		User.upsert({user_id:this.userId}, newPlayer);
+	},
+
+	changeDirection: function(velocity) {
+		if(this.userId==null) {
+			throw new Meteor.Error("logged-out", "The user must be playing to change direction.");
+		}
+		if(!User.findOne({user_id: this.userId})) {
+			throw new Meteor.Error("logged-out", "The user must be playing to change direction.");
+		}
+		User.update({user_id:this.userId}, {$set: {vel : velocity}});
+	},
+
+	activatePowerUp: function() {
+		if(this.userId==null) {
+			throw new Meteor.Error("logged-out", "The user must be playing to change direction.");
+		}
+		if(!User.findOne({user_id: this.userId})) {
+			throw new Meteor.Error("logged-out", "The user must be playing to change direction.");
+		}
+		var player = User.findOne({user_id:this.userId});
+		var pid = player.powerup;
+		if (pid > 0 && Powerups[pid] && player.pu_active == -1) {
+			if (pid == 1) {
+				User.update({user_id:this.userId}, {
+					$set: {
+						pu_active : PowerupTable[pid].duration, 
+						speed_powerup : 1
+					}
+				});
+			}
+		}
+	}
+});
+
 Meteor.startup(function () {
-	  	var Active_Circles=[];
 		// Create food
 		for (var i = 0; i < 200; i++) {
-			var F = new Circle2();
+			var newFood = new Circle();
 			var x = Math.ceil(Math.random()*1480) + 5;
 			var y = Math.ceil(Math.random()*830) + 5;
-			F.entity = 3;
-			F.radius = 5;
-			F.pos = [x, y];
-			Active_Circles.push(F);
+			newFood.entity = 3;
+			newFood.radius = 5;
+			newFood.pos = [x, y];
+			Food.insert(newFood);
 		}
 
 		//create powerUps
 		for (var i = 0; i < 50; i++) {
-			var F = new Circle2();
+			var newPowerUp = new Circle();
 			var x = Math.ceil(Math.random()*500) + 5 + 500;
 			var y = Math.ceil(Math.random()*500) + 5 + 200;
-			F.entity = 2;
-			F.powerup = 1;
-			F.radius = 5;
-			F.pos = [x, y];
-			Active_Circles.push(F);
+			newPowerUp.entity = 2;
+			newPowerUp.powerup = 1;
+			newPowerUp.radius = 5;
+			newPowerUp.pos = [x, y];
+			PowerUp.insert(newPowerUp);
 		}
-
-		// Create Dummy Player (Bigger)
-		var D1 = new Circle2();
-		D1.pos = [125, 375];
-		D1.radius = 50;
-		D1.entity = 1;
-		D1.isDummy = true;
-		Active_Circles.push(D1);
-		
-		var D2 = new Circle2();
-		D2.pos = [375, 125];
-		D2.radius = 20;
-		D2.entity = 1;
-		D2.isDummy = true;
-		Active_Circles.push(D2);
-
-		GameBoard.insert({ActiveCircles:Active_Circles});
+		Board.initialize();
 });
