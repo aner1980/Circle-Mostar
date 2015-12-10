@@ -1,3 +1,37 @@
+Meteor.startup(function() {
+	Tracker.autorun(function() {
+		Meteor.subscribe('Players');
+		Meteor.subscribe('Foods');
+		Meteor.subscribe('Powerups');
+		if (User) {
+		User.find(Meteor.userId()).observeChanges({
+			changed: function(id, fields) {
+				console.log('Received changes to player from server');
+				if (fields.powerup) {
+					Session.set('PowerupIcon', PowerupTable[myCircle.powerup].icon);
+				} else if (!fields.is_playing && Session.get('GameState')=='Playing') {
+					Session.set('GameState', 'GameOver');
+				}
+			}
+		});
+		/*
+			var myCircle = User.findOne(Meteor.userId());
+			if (myCircle) {
+				console.log('Tracker runs');
+				// Check for game over
+				if (!myCircle.is_playing && Session.get('GameState')=='Playing')
+					Session.set('GameState', 'GameOver')
+				
+				// Check for powerup collected
+				if (myCircle.powerup > 0 && myCircle.pu_active < 0 && PowerupTable[myCircle.powerup])
+					Session.set('PowerupIcon', PowerupTable[myCircle.powerup].icon);
+			}
+		*/
+		}
+	});
+
+});
+
 Template.site.helpers({
 	pageIs: function(page) {
 		if (Session.get('CurrentPage') == page) {
@@ -33,14 +67,20 @@ Template.site.onRendered(function() {
 Template.gameNotStarted.events({
 	'click .game-start': function() {
 		Session.set('GameState', 'Started');
-		Board2.initialize_demo1();
+		//Board2.initialize_demo1();
+		var started = Meteor.call('startGame');
+		if (started)
+			Session.set('GameState', 'Playing');
 	}
 });
 
 Template.gameOver.events({
 	'click .game-start': function() {
 		Session.set('GameState', 'Started');
-		Board2.initialize_demo1();
+		//Board2.initialize_demo1();
+		var started = Meteor.call('startGame');
+		if (started)
+			Session.set('GameState', 'Playing');
 	}
 });
 

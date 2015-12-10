@@ -3,7 +3,7 @@ Achievements = new Mongo.Collection('achievements');
 achvCheck = function(circle){
 	//loop through the player's achievement array
 	//player achievement array contains a list of achievements the player has earned, marked by id
-	var user_achievements = Meteor.user().profile.achievements;
+	var user_achievements = Meteor.users.findOne(circle.user_id).profile.achievements;
 	
 	for(var i=0; i<Achievements.find().count(); i++) {
 		switch(i) {

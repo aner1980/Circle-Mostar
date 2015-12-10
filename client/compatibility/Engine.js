@@ -4,9 +4,12 @@ var FOOD_RADIUS_INCREASE = 3;
 var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
-var GameBoard = new Mongo.Collection('game_board');
 
+//TODO: Get PowerupIcon --> player.powerup -- Powerups[#].icon | DONE
+//TODO: Set GameOver when dead (status 'Playing' + not playing) | DONE
+//TODO: Set Playing when starting (Meteor.call()) | DONE
 
+/*
 function performMove(Circle, dt) {
 	// Change velocity for user circle
 	if (Circle.user_id == Meteor.userId()) {
@@ -215,13 +218,13 @@ var Board2 = {
 			ctx.fill();
 			ctx.stroke();
 			
-			/*
+			
 			
                       ctx.beginPath();
                       ctx.arc(Board.Foods[i].x,Board.Foods[i].y,5,0,2*Math.PI);
                       ctx.fill();
                       ctx.stroke();
-			*/
+			
 		}	
 	},
 
@@ -262,6 +265,106 @@ var Board2 = {
 	}
 		
 };
+*/
+
+function drawBoard() {
+		var currentPlayers = User.find({is_playing: true}).fetch();
+		var currentFoods = Food.find().fetch();
+		var currentPowerups = PowerUp.find().fetch();
+		var cvs = document.querySelector('canvas')
+		if (cvs == null)
+			return;
+		
+		//console.log('#Players: ' + currentPlayers.length + '\n' + 
+		//			'#Foods: ' + currentFoods.length + '\n' + 
+		//			'#Powerups: ' + currentPowerups.length);
+		
+		var ctx = cvs.getContext('2d');
+		ctx.clearRect(0,0,cvs.width,cvs.height);
+		
+		// DRAW THE FOODS
+		for (var i = 0; i < currentFoods.length; i++) {
+			var Circle = currentFoods[i]
+			var x = Circle.pos[0];
+			var y = Circle.pos[1];
+			ctx.fillStyle = 'red';
+			
+			ctx.beginPath();
+			ctx.arc(x, y, Circle.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.stroke();
+		}	
+		
+		// DRAW THE POWERUPS
+		for (var i = 0; i < currentPowerups.length; i++) {
+			var Circle = currentPowerups[i]
+			var x = Circle.pos[0];
+			var y = Circle.pos[1];
+			ctx.fillStyle = 'blue';
+			
+			ctx.beginPath();
+			ctx.arc(x, y, Circle.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.stroke();
+		}
+		
+		// DRAW THE PLAYERS
+		for (var i = 0; i < currentPlayers.length; i++) {
+			var Circle = currentPlayers[i]
+			var x = Circle.pos[0];
+			var y = Circle.pos[1];
+			
+			if (Circle.user_id == Meteor.userId()) {
+				ctx.fillStyle = 'black';
+			} else {
+				ctx.fillStyle = 'yellow';
+			}
+			
+			ctx.beginPath();
+			ctx.arc(x, y, Circle.radius, 0, 2*Math.PI);
+			ctx.fill();
+			ctx.stroke();
+		}	
+	}
+
+function SendVelocityUpdate() {
+	var userVel = [0, 0];
+	if (KeyMap[37] == 1) {
+		// Left
+		userVel[0] += -1;
+	}
+	if (KeyMap[39] == 1) {
+		// Right
+		userVel[0] += 1;
+	}
+	if (KeyMap[38] == 1) {
+		// Up
+		userVel[1] += -1;
+	}
+	if (KeyMap[40] == 1) {
+		// Down
+		userVel[1] += 1;
+	}
+	Meteor.call('changeDirection', userVel);
+}
+
+function runGame() {
+	drawBoard();
+	
+	var me = User.findOne({user_id: Meteor.userId()})
+	if (me) {
+		if (me.powerup >= 0 && me.pu_active == -1) {
+			Session.set('PowerupIcon', PowerupTable[me.powerup].icon);
+		} else if (me.pu_active >= 0) {
+			Session.set('PowerupIcon', PowerupTable[0].icon);
+		}
+		console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState'));
+		if (!me.is_playing && Session.get('GameState')=='Playing') {
+			Session.set('GameState', 'GameOver');
+		}
+	}
+}
+	
 
 function getTimePlayed() {
 	var mins = Math.floor(TotalTimePlayed/60);
@@ -277,15 +380,34 @@ $(function() {
 		
 		// SPACEBAR -- ACTIVATE OBTAINED POWERUP
 		if (e.keyCode == 32) {
+			var activated = Meteor.call('activatePowerup');
+			if (activated) 
+				Session.set('PowerupIcon', '/powerup-empty.png');
+			/*
 			var myCirc = Board2.getCircleFromUserID(Meteor.userId());
 			if (myCirc) {
 				Board2.activatePowerup(myCirc);
 			}
+			*/
+		}
+		
+		switch (e.keyCode) {
+			case 37: case 38: case 39: case 40:
+				SendVelocityUpdate();
+				break;
 		}
 	});
 	document.addEventListener('keyup', function(e){
 		KeyMap[e.keyCode] = 0;
+		
+		switch (e.keyCode) {
+			case 37: case 38: case 39: case 40:
+				SendVelocityUpdate();
+				break;
+		}
 	});
+	
+	setInterval(runGame, DELTAT);
 });
 /*
 

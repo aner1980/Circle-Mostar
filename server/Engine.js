@@ -1,6 +1,7 @@
 var DELTAT = 0.0625;
-var RADIUS_DELAY_PS = 3; // per second
-var FOOD_RADIUS_INCREASE = 3;
+var RADIUS_DECAY_MOD = 1/30;
+var RADIUS_DECAY_PS = 3; // per second
+var FOOD_RADIUS_INCREASE = .5;
 var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
@@ -105,12 +106,12 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 			// Give Powerup to Owner 
 			User.update({user_id: OwnerCircle.user_id}, {
 				$set: {
-					powerup: UsedCircle.powerup,
-					pu_active: UsedCircle.pu_active
+					powerup: OwnerCircle.powerup,
+					pu_active: OwnerCircle.pu_active
 				}
 			});
 			
-			Food.update(UsedCircle._id, { 
+			PowerUp.update(UsedCircle._id, { 
 				$set: {
 					radius: 0
 				}
@@ -129,7 +130,7 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 			}
 		});
 			
-		PowerUp.update(UsedCircle._id, { 
+		Food.update(UsedCircle._id, { 
 			$set: {
 				radius: 0
 			}
@@ -155,9 +156,9 @@ Board = {
 			// performMove()
 			user.pos[0] += user.vel[0] * user.speed * DELTAT;
 			user.pos[1] += user.vel[1] * user.speed * DELTAT;
-
+			
 			if (!user.isDummy && user.entity == 1) {
-				user.radius -= RADIUS_DELAY_PS * DELTAT;
+				user.radius -= Math.max(user.radius * RADIUS_DECAY_MOD * DELTAT, DELTAT); //RADIUS_DECAY_PS * DELTAT;
 			}
 			User.update({user_id: user.user_id}, {$set: {
 				pos : user.pos,
@@ -170,25 +171,32 @@ Board = {
 		var activePlayers = User.find({is_playing: true}).fetch();
 		var activeFoods = Food.find().fetch();
 		var activePowerups = PowerUp.find().fetch();
+		
+		//console.log(activePlayers);
 
 		for (var i = 0; i < activePlayers.length; i++) {
-			var Circle1 = activePlayers.length[i];
+			var Circle1 = activePlayers[i];
 			
 			// Check player collision
+			//console.log('Checking collision of PLAYERS');
 			for (var k = i+1; k < activePlayers.length; k++) {
-				var Circle2 = activePlayers.length[k];
+				var Circle2 = activePlayers[k];
 				checkCollide(Circle1, Circle2);
 			}
 			
 			// Check food collision
+			//console.log('Checking collision of FOODS (' + activeFoods.length + ')');
 			for (var k = 0; k < activeFoods.length; k++) {
-				var Circle2 = activeFoods.length[k];
+				var Circle2 = activeFoods[k];
+				//console.log(Circle1);
+				//console.log(Circle2);
 				checkCollide(Circle1, Circle2);
 			}
 			
 			// Check powerup collision
+			//console.log('Checking collision of POWERUPS');
 			for (var k = 0; k < activePowerups.length; k++) {
-				var Circle2 = activePowerups.length[k];
+				var Circle2 = activePowerups[k];
 				checkCollide(Circle1, Circle2);
 			}
 		}
@@ -200,11 +208,13 @@ Board = {
 			var player = activePlayers[i];
 			var powerup = player.powerup;
 			if (powerup > 0 && player.entity == 1) {
-				console.log('POWERUP: ' + powerup);
-				if (player.pu_active == Powerups[powerup].duration) {
+				//console.log('POWERUP: ' + powerup);
+				console.log('Running Powerups (' + powerup + ') for player ' + player.user_id + ' | Checking ...');
+				console.log('\t' + player.pu_active + ' == ' + PowerupTable[powerup].duration);
+				if (player.pu_active == PowerupTable[powerup].duration) {
 					switch (powerup) {
 						case 1:
-							player.speed += Powerups[1].bonus;
+							player.speed += PowerupTable[1].bonus;
 							break;
 					}
 				} else if (player.pu_active == -1) {
@@ -212,15 +222,17 @@ Board = {
 				} else if (player.pu_active <= 0) {
 					switch (powerup) {
 						case 1: 
-							player.speed -= Powerups[1].bonus;
+							player.speed -= PowerupTable[1].bonus;
 							player.powerup = 0;
 							break;
 					}
 				}
 				player.pu_active -= DELTAT;
 				
+				console.log('New pu_active: ' + player.pu_active);
+				
 				// Apply updates to server
-				User.findOne({user_id: player.user_id}, {
+				User.update({user_id: player.user_id}, {
 					$set: {
 						pu_active: player.pu_active,
 						speed: player.speed,
@@ -236,8 +248,10 @@ Board = {
 		var deadPlayers = User.find({radius: { $lte: 0 }}).fetch();
 		
 		for (var i = 0; i < deadPlayers.length; i++) {
+			var player = deadPlayers[i];
+			
 			// Check Achievements
-			achvCheck(deadPlayers[i]);
+			achvCheck(player);
 					
 			// Get XP and Currency for playing
 			var xp = 50 + 5 * player.food_eaten + 15 * player.players_eaten;
@@ -249,6 +263,10 @@ Board = {
 		
 		// They lose the game so no longer playing
 		User.update({radius: { $lte: 0 }}, { $set: { is_playing: false }});
+		
+		// Remove foods and powerups that have been eaten
+		//Food.update({radius: { $lte: 0 }}, { $set: { is_playing: false }});
+		//PowerUp.update({radius: { $lte: 0 }}, { $set: { is_playing: false }});
 		
 		/*
 		var newCircles = [];

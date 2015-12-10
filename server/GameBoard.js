@@ -4,7 +4,17 @@ var Food = new Mongo.Collection('Foods');
 var PowerUp = new Mongo.Collection('Powerups');
 /**/
 
-var PowerupTable = [ {icon: '/powerup-empty.png'}, {name: "speed", duration: 5, bonus: 60, icon: '/powerup-speed.png'} ];
+Meteor.publish('Players', function() {
+	return User.find();
+});
+
+Meteor.publish('Foods', function() {
+	return Food.find();
+});
+
+Meteor.publish('Powerups', function() {
+	return PowerUp.find();
+});
 
 function Circle() {
 	this.pos = [0, 0];
@@ -28,18 +38,25 @@ function Circle() {
 };
 
 Meteor.methods({
+	testFunc: function(Message) {
+		console.log('User ' + this.userId + ' sent message "' + Message + '"');
+	},
 	startGame: function() {
 		if(this.userId==null) {
 			throw new Meteor.Error("logged-out", "The user must be logged in to start new game.");
 		}
-		var currentUser = user.findOne();
+		var currentUser = User.findOne();
 		var newPlayer = new Circle();
 		newPlayer.pos = [Math.ceil(Math.random()*1480) + 5, Math.ceil(Math.random()*830) + 5];
 		newPlayer.radius = 30;
 		newPlayer.entity = 1;
 		newPlayer.user_id = this.userId;
 		newPlayer.is_playing = true;
+		
+		console.log('User ' + this.userId + ' requested to begin playing');
+		
 		User.upsert({user_id:this.userId}, newPlayer);
+		return true;
 	},
 
 	changeDirection: function(velocity) {
@@ -52,7 +69,7 @@ Meteor.methods({
 		User.update({user_id:this.userId}, {$set: {vel : velocity}});
 	},
 
-	activatePowerUp: function() {
+	activatePowerup: function() {
 		if(this.userId==null) {
 			throw new Meteor.Error("logged-out", "The user must be playing to change direction.");
 		}
@@ -61,20 +78,28 @@ Meteor.methods({
 		}
 		var player = User.findOne({user_id:this.userId});
 		var pid = player.powerup;
-		if (pid > 0 && Powerups[pid] && player.pu_active == -1) {
+		console.log('User ' + this.userId + ' requested to activate powerups');
+		//console.log('\tPID: ' + pid + '\tPU_ACTIVE: ' + player.pu_active);
+		if (pid > 0 && PowerupTable[pid] && player.pu_active == -1) {
+			//console.log('\t[USER HAS POWERUP]');
 			if (pid == 1) {
+				//console.log('\t\t[USE: SPEEDBOOST]');
 				User.update({user_id:this.userId}, {
 					$set: {
 						pu_active : PowerupTable[pid].duration, 
 						speed_powerup : 1
 					}
 				});
+				return true;
 			}
 		}
+		return false;
 	}
 });
 
 Meteor.startup(function () {
+		Food.remove({});
+		PowerUp.remove({});
 		// Create food
 		for (var i = 0; i < 200; i++) {
 			var newFood = new Circle();
