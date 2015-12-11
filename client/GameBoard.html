@@ -1,5 +1,8 @@
 <body>  
 	{{> loginModal}}
+	{{#if currentUser}}
+		{{> editYourAvatarModal}}
+	{{/if}}
 	<canvas id="cvs-game-board"></canvas>
 	<div class="ui-element" id="game-time">
 		<span id="game-time-text">0:00</span>
@@ -181,6 +184,7 @@
 		<div id="account-details" class="rounded div-inline">
 			<div id="acc-account-dets">
 				<h4 class="black">Account Details</h4>
+				{{> profileAvatar}}
 				{{> accountLevel}}
 				<ul class="acc-dets">
 					<!-- TODO: Add avatar -->
@@ -211,6 +215,11 @@
 			<span class="user-logout">Log Out</span>
 		</div>
 	</div>
+</template>
+
+<!-- Avatar -->
+<template name="profileAvatar">
+	{{> avatar user=currentUser size="large" shape="circle" bgColor="Blue" txtColor="Black"}}
 </template>
 
 <template name="postGameInfo">

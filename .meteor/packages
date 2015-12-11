@@ -14,3 +14,6 @@ chrismbeckett:toastr
 accounts-google
 accounts-facebook
 accounts-ui
+utilities:avatar
+particle4dev:upload-avatar
+accounts-base

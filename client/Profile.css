@@ -46,6 +46,7 @@
 	width: 320px;
 }
 */
+
 #mask {
 	position: fixed;
 	top: 0px;
@@ -100,3 +101,5 @@
 .profile_contain {
 	padding: 15px;
 }
+
+/**/

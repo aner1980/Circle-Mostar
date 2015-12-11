@@ -198,6 +198,28 @@ Template.postGameInfo.helpers({
 	}
 });
 
+// Click on avatar
+Template.profileAvatar.events({
+	"click .avatar-image": function(){
+		$('#editYourAvatarModal').modal();
+	}
+});
+
+Avatar.setOptions({
+	fallbackType: "default image",
+	//defaultImageUrl: "https://d13yacurqjgara.cloudfront.net/users/712998/avatars/small/87eba5378e98c6d22a5438505d12a9b0.png?1449145728",
+	gravatarDefault: "identicon",
+	customImageProperty: function() {
+		var user = this;
+		return user.profile.image;
+	}
+});
+
+Template.body.events({
+	'click #test-ava': function() {
+		$('#editYourAvatarModal').modal();
+	}
+});
 
 /*
 Template.gameNotStarted.events({
@@ -247,6 +269,7 @@ Template.gameOver.helpers({
 });
 */
 $(function() {
+	Session.setDefault('counter', 0);
 	
 	Session.set('CurrentPage', 'Game');
 	Session.set('GameState', 'NotStarted');

@@ -40,23 +40,9 @@ header {
   padding: 20px 15px 15px 15px;
   position: relative;
 }
-/*
-.jumbotron {
-	
-	background-image: url("http://www.thisiscolossal.com/wp-content/uploads/2015/03/florian-7.gif");
-	background-size: cover;
-	
-}
-*/
 
 body {
 	background-color: #000;
-	/*
-	margin: 0;
-  	padding: 0;
-	background-image: url("http://petaimg.com/wp-content/uploads/2015/09/blue-background-wallpaper-high-resolution.jpg");
-	background-size: cover;
-	*/
 }
 
 body, td, th {
@@ -326,16 +312,6 @@ canvas {
   rgba(75, 2, 111, 0.5) 20px, 
   rgba(75, 2, 111, 0.5) 40px
   );
-
-/*
-	background: repeating-radial-gradient(
-  circle,
-  #5E575F,
-  #5E575F 20px,
-  #4b026f 20px, 
-  #4b026f 40px
-);
-*/
 	margin: 0 auto;
 	display: block;
 }
@@ -384,6 +360,16 @@ canvas {
 	font-size: 94px;
 }
 
+
+/*
+	background: repeating-radial-gradient(
+  circle,
+  #5E575F,
+  #5E575F 20px,
+  #4b026f 20px, 
+  #4b026f 40px
+);
+*/
 /*
 
 .GOVER {

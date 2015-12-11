@@ -91,7 +91,8 @@ AccountsTemplates.configure({
 			validationErrors: "Sorry, something went wrong.",
 			//verifyEmailFirst: "Please verify your email first. Check the email and follow the link!",
 		}
-	}
+	},
+	showReCaptcha: false
 	/*
 	https://www.google.com/recaptcha/intro/index.html
 	reCaptcha: {
