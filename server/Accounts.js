@@ -21,8 +21,8 @@ ServiceConfiguration.configurations.remove({});
 
 ServiceConfiguration.configurations.upsert({service: 'facebook'}, {
     service: 'facebook',
-    appId: '812411045548823',
-    secret: 'cd7c9e4fd723e04c0838a7b91aaf2c14'
+    appId: '976315625782061',
+    secret: 'dbb1c7a0742a6ca73f0d97c0b4975713'
 });
 
 ServiceConfiguration.configurations.upsert({service: 'google'}, {

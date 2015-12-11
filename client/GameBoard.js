@@ -182,6 +182,7 @@ Template.leaderboard.helpers({
 	
 Template.leaderEntry.helpers({
 	getUsername: function() {
+		console.log(this);
 		return Meteor.users.findOne(this.user_id).username;
 	}
 });
