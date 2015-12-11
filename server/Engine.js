@@ -1,5 +1,5 @@
 var DELTAT = 0.0625;
-var RADIUS_DECAY_MOD = 1/30;
+var RADIUS_DECAY_MOD = 1/15;
 var RADIUS_DECAY_PS = 3; // per second
 var FOOD_RADIUS_INCREASE = .5;
 var GameIntervalDemo = null;
@@ -243,9 +243,22 @@ Board = {
 		}
 					
 	},
+	getTimeMultiplier: function(circle) {
+		var calcMult = 0;
+		var secs = (new Date().valueOf() - circle.startTime) / 1000;
+		
+		if (secs < 30) {
+			calcMult = 0;
+		} else if (secs < 60) {
+			calcMult = 0.5;
+		} else {
+			calcMult = 1;
+		}
+		return Math.min( calcMult, 1 );
+	},
 	determineGameOver: function() {
 		//var activePlayers = User.find({is_playing: true}).fetch();
-		var deadPlayers = User.find({radius: { $lte: 0 }}).fetch();
+		var deadPlayers = User.find({radius: { $lte: 0 }, is_playing: true}).fetch();
 		
 		for (var i = 0; i < deadPlayers.length; i++) {
 			var player = deadPlayers[i];
@@ -254,15 +267,24 @@ Board = {
 			achvCheck(player);
 					
 			// Get XP and Currency for playing
-			var xp = 50 + 5 * player.food_eaten + 15 * player.players_eaten;
+			var xp = 50 + 1 * player.food_eaten + 5 * player.players_eaten;
+			xp += xp * Board.getTimeMultiplier(player);
 			var currency = 200 + 5 * player.food_eaten + 20 * player.players_eaten;
 			
 			// Update profile with new values
-			Meteor.users.update(player.user_id, {$inc: {experience: xp, 'profile.currency': currency}});
+			Meteor.users.update(player.user_id, {$inc: {'profile.experience': xp, 'profile.currency': currency}});
+			
+			User.update({user_id: player.user_id}, { 
+				$set: {
+					radius: 0,
+					is_playing: false,
+					round_reward: [xp, currency]
+				}
+			});
 		}
 		
 		// They lose the game so no longer playing
-		User.update({radius: { $lte: 0 }}, { $set: { is_playing: false }});
+		//User.update({radius: { $lte: 0 }}, { $set: { is_playing: false, round_reward: [xp, currency] }});
 		
 		// Remove foods and powerups that have been eaten
 		//Food.update({radius: { $lte: 0 }}, { $set: { is_playing: false }});

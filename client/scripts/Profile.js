@@ -1,3 +1,4 @@
+/*
 Meteor.startup(function() {
 	Deps.autorun(function() {
 		Meteor.subscribe('Abilities');
@@ -59,3 +60,5 @@ Template.achievements.helpers({
 		return Achievements.find({id: {$in: Meteor.user().profile.achievements}});
 	}
 });
+
+*/

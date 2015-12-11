@@ -1,14 +1,7 @@
 <body>  
-	{{> login_ui}}
+	{{> loginModal}}
     {{> site}}
-    {{> text}}
 </body>
-
-<template name="login_ui">
-	<div class="log-btns">
-		{{> loginButtons align="right"}}
-	</div>
-</template>
 
 <template name="text">
 	<div class="logotext">
@@ -26,6 +19,8 @@
 		{{> loginButtons}}
 	</div>
 -->
+
+<!--
 	<nav class="navbar navbar-inverse">
 		<div class="container-fluid">
 			<div class="navbar-header">
@@ -38,19 +33,52 @@
 					<li><span id="to-game"> <div class="col-xs-12" style="height:50px;"></div>  Play</span></li>
 					<li><span id="to-profile" >Profile</span></li>
 					<li><span id="to-game"> <div class="col-xs-12" style="height:50px;"></div>  How to play</span></li>
-
+					{{#if currentUser}}
+						<li><span id="logout-user">Log Out</span></li>
+					{{else}}
+						<li><span id="login-user">Log In</span></li>
+					{{/if}}
+						
 
 				</ul>
 			</div>
 		</div>
 	</nav>
 
+-->
+	<!-- Before playing game, show menu, canvas in the background -->
+	<canvas id="cvs-game-board"></canvas>
+	<div class="ui-element" id="game-time">
+		<span id="game-time-text">0:00</span>
+	</div>
+	<div class="ui-element" id="game-actives">
+		<img class="ui-element a-slot" id="slot-powerup" src="{{getPowerupIcon}}" />
+		<img class="ui-element a-slot" id="slot-abil1" src="{{currentUser.profile.abil1}}" />
+		<img class="ui-element a-slot" id="slot-abil2" src="{{currentUser.profile.abil2}}" />
+		<span class="ui-element keybind" id="kb-p">SP</span>
+		<span class="ui-element keybind" id="kb-a1">D</span>
+		<span class="ui-element keybind" id="kb-a2">F</span>
+	</div>
+	
+	<!-- Menu is modal; do not remove modal background mask util user clicks Play -->
+	<div class="modal-mask" id="acc-ops-container">
+		<!-- If user is logged in, show account details, else show login prompt -->
+		{{#if currentUser}}
+			{{> accountControls}}
+		{{else}}
+			<div id="login-box" class="rounded center-x div-inline" style="width:300px;">
+				{{> atForm}}
+			</div>
+		{{/if}}
+	</div>
+
+	<!--
 	{{#if currentUser}}
 		{{#if pageIs "Game"}}
 				{{#if gameStateIs "NotStarted"}}
 					{{> gameNotStarted}}
 				{{/if}}
-				{{#if gameStateIs "Over"}}
+				{{#if gameStateIs "GameOver"}}
 					{{> gameOver}}
 				{{/if}}
 			<div class="game-area">
@@ -73,8 +101,100 @@
 			{{> profile_page}}
 		{{/if}}
 	{{/if}}
+	-->
 
 </template>
+
+<template name="accountControls">
+	<div id="account-wrapper" class="div-inline center-x">
+		{{> accountAchievements}}
+		{{> accountOptions}}
+	</div>
+</template>
+
+<template name="accountAchievements">
+	{{> achievementsUnlocked}}
+	{{> achievementsLocked}}
+</template>
+
+<template name="achievementsUnlocked"></template>
+<template name="achievementsLocked"></template>
+
+<template name="accountOptions">
+	<div id="account-details" class="rounded div-inline">
+		<div id="acc-account-dets">
+			<h4>Account Details</h4>
+			{{> accountLevel}}
+			<ul class="acc-dets">
+				<!-- TODO: Add avatar -->
+				<li>Name: {{currentUser.username}}</li>
+				<li>Stars: {{currentUser.profile.currency}}</li>
+				<li>High Score: {{currentUser.profile.HighScore}}</li>
+			</ul>
+		</div>
+		<hr>
+		<!-- Game Options -->
+		<h4 class="black">My Abilities</h4>
+		<div id="acc-game-ops" style="text-align:center;">
+			{{#if choosingAbility}}
+				<div id="ability-container">
+					{{> abilitySelect}}
+				</div>
+			{{else}}
+				<img class="abil" id="abil-sel-1" src="{{getAbility 1}}" />
+				<img class="abil" id="abil-sel-2" src="{{getAbility 2}}" />
+				<button type="button" id="btn-play-game">Play Game</button>
+			{{/if}}
+		</div>
+		<hr>
+		<!-- Account Controls -->
+		<span class="user-logout">Log Out</span>
+	</div>
+</template>
+
+<template name="accountLevel">
+	<div style="width: 250px; border: 1px solid black; height:20px;">
+		<span class="level-progress-bar" style="width:{{getLevelProgress}}px;"></span>
+		<span class="level-progress-text">Level {{getLevel}}</span>
+	</div>
+</template>
+
+<template name="abilitySelect">
+	{{#each abilities}}
+		{{> ability_entry}}
+	{{/each}}
+</template>
+
+<template name="ability_entry">
+	<div class="ability-entry" id="{{aid}}">
+		<img class="a-icon" src="{{icon}}" title="{{name}}" height="50px" width="50px" />
+		
+		<!--
+		<div class="dets">
+			<span class="a-name">{{name}}</span>
+			<span class="a-desc">{{desc}}</span>
+		</div>
+		-->
+	</div>
+</template>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 <template name="gameNotStarted">
 		<div class="g-popup game-start">
@@ -83,8 +203,10 @@
 </template>
 
 <template name="gameOver">
-		<div class="g-popup game-start">
+		<div class="g-popup">
 			<span class="GOVER">Game Over</span><br />
-			<button type="button"><h1>Play Again</h1></button>
+			<span class="reward">XP: {{getReward "XP"}}</span><br />
+			<span class="reward">Stars: {{getReward "Currency"}}</span><br /><br />
+			<button type="button" class="game-start"><h1>Play Again</h1></button>
 		</div>
 </template>

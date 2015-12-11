@@ -1,4 +1,4 @@
-.ability-entry {
+/*.ability-entry {
 	display: inline-block;
 	position: relative;
 	float: left;
@@ -45,7 +45,7 @@
 	left: 0px;
 	width: 320px;
 }
-
+*/
 #mask {
 	position: fixed;
 	top: 0px;

@@ -1,0 +1,185 @@
+
+  .modal-body {
+    padding-top:0px;
+  }
+  .at-title {
+    margin-bottom:20px;
+
+  }
+    .at-title h3 {
+      font-weight:300;
+      content: "Login"
+    }
+
+  .at-error {
+    font-size:12px;
+    color:red;
+  }
+  // bootstrap styling for input fields
+	#at-field-name,
+  #at-field-email,
+  #at-field-password,
+  #at-field-password_again {
+    display:block;
+    width:100%;
+    height:34px;
+    padding:6px 12px;
+    font-size:14px;
+    line-height:1.42857143;
+    color:#555555;
+    background-color:#ffffff;
+    background-image:none;
+    border:1px solid #cccccc;
+    border-radius:0px;
+    -webkit-transition:border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+    -o-transition:border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+  }
+  #at-field-username,
+  #at-field-email,
+  #at-field-password {
+    margin-bottom:10px;
+  }
+  // remove borders
+	#at-field-username:focus,
+  #at-field-email:focus,
+  #at-field-password:focus,
+  #at-field-password_again:focus {
+    outline:none;
+  }
+  #at-btn {
+  height:auto;
+  width:100%;
+  margin-top:20px;
+  margin-bottom:10px;
+  padding:5px;
+  border:2px solid #328d95;
+  background-color:#328d95;
+  font-size:85%;
+  color:#FFFFFF;
+  text-align:center;
+  cursor:pointer;
+  }
+
+
+
+  #at-btn:hover {
+    background-color:#FFFFFF;
+    color:#328d95;
+  }
+
+  #at-facebook{
+    width:100%;
+  }
+
+  #at-google{
+    width:100%;
+  }
+
+
+  h3{
+    visibility: hidden;
+  }
+
+  h3:after{
+    visibility: visible;
+    content: "Login";
+    text-align: center;
+    padding-left: 60px;
+    font-weight: bold;
+  }
+
+  #at-field-username_and_email{
+    width: 100%;
+  }
+
+  #at-field-password{
+    width: 100%;
+  }
+
+  #at-forgotPwd{
+    text-align: center;
+  }
+
+  strong{
+    visibility: hidden;
+  }
+
+  strong:after{
+    visibility: visible;
+    text-align: center;
+    padding-top: 100px;
+    padding-left: 100px;
+    content: "OR";
+  }
+
+  label[for=at-field-username_and_email]{
+    visibility: hidden;
+  }
+
+  label[for=at-field-username_and_email]:after{
+    visibility: visible;
+    content: "Username or email";
+    padding: 60px;
+  }
+
+  label[for=at-field-password]{
+    visibility: hidden;
+  }
+
+  label[for=at-field-password]:after{
+    visibility: visible;
+    content: "Password";
+    padding: 20px;
+  }
+
+  label[for=at-field-username]{
+    visibility: hidden;
+  }
+
+  label[for=at-field-username]:after{
+    visibility: visible;
+    margin-top: 10px;
+    content: "Username";
+    padding: 20px;
+  }
+
+  label[for="at-field-email"]{
+    visibility: hidden;
+  }
+
+  label[for="at-field-email"]:after{
+    visibility: visible;
+    margin-top: 10px;
+    content: "Email";
+    padding: 60px;
+  }
+
+  label[for=at-field-password_again]{
+    visibility: hidden;
+  }
+
+  label[for=at-field-password_again]:after{
+    visibility: visible;
+    margin-top: 10px;
+    content: "Repeat Password";
+    padding: 70px;
+  }
+
+  #at-field-username{
+    width: 100%; 
+  }
+
+  #at-field-email{
+    width: 100%;
+  }
+
+  #at-field-password_again{
+    width: 100%;
+  }
+
+  .avatar-image:hover{
+    background: orange;
+
+  }
+
+

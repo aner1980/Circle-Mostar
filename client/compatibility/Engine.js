@@ -275,6 +275,10 @@ function drawBoard() {
 		if (cvs == null)
 			return;
 		
+		// Correct canvas width/height based on display width/height
+		cvs.width = window.innerWidth;
+		cvs.height = window.innerHeight;
+		
 		//console.log('#Players: ' + currentPlayers.length + '\n' + 
 		//			'#Foods: ' + currentFoods.length + '\n' + 
 		//			'#Powerups: ' + currentPowerups.length);
@@ -282,11 +286,14 @@ function drawBoard() {
 		var ctx = cvs.getContext('2d');
 		ctx.clearRect(0,0,cvs.width,cvs.height);
 		
+		console.log('Canvas size: [' + cvs.width + ',' + cvs.height + ']');
+		
 		// DRAW THE FOODS
 		for (var i = 0; i < currentFoods.length; i++) {
 			var Circle = currentFoods[i]
 			var x = Circle.pos[0];
 			var y = Circle.pos[1];
+			
 			ctx.fillStyle = 'red';
 			
 			ctx.beginPath();
@@ -313,6 +320,9 @@ function drawBoard() {
 			var Circle = currentPlayers[i]
 			var x = Circle.pos[0];
 			var y = Circle.pos[1];
+			
+			if (Circle.radius <= 0) 
+				continue;
 			
 			if (Circle.user_id == Meteor.userId()) {
 				ctx.fillStyle = 'black';
@@ -358,17 +368,25 @@ function runGame() {
 		} else if (me.pu_active >= 0) {
 			Session.set('PowerupIcon', PowerupTable[0].icon);
 		}
-		console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState'));
-		if (!me.is_playing && Session.get('GameState')=='Playing') {
+		//console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState'));
+		if (me.radius==0 && !me.is_playing && Session.get('GameState')=='Playing') {
 			Session.set('GameState', 'GameOver');
+			$('#acc-ops-container').toggle(true);
 		}
+	
+		if (me.is_playing)
+			$("#game-time-text").text(getTimePlayed(me.startTime));
+	} else {
+		$("#game-time-text").text('00:00');
 	}
 }
 	
 
-function getTimePlayed() {
-	var mins = Math.floor(TotalTimePlayed/60);
-	var secs = (Math.floor(TotalTimePlayed) % 60);
+function getTimePlayed(start) {
+	var difMillis = new Date().valueOf() - start;
+	var difSecs = difMillis / 1000;
+	var mins = Math.floor(difSecs/60);
+	var secs = (Math.floor(difSecs) % 60);
 	return mins + ":" + (secs<10 ? "0"+secs : secs);
 }
 

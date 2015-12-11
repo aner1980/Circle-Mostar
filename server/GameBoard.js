@@ -17,6 +17,7 @@ Meteor.publish('Powerups', function() {
 });
 
 function Circle() {
+	this.startTime = 0;
 	this.pos = [0, 0];
 	this.vel = [0, 0];
 	this.speed = 100;
@@ -35,6 +36,7 @@ function Circle() {
 	this.consumed_multiple_players = 0;
 	this.failed_consumption = 0;
 	this.is_playing = false;
+	this.round_reward = [0, 0];
 };
 
 Meteor.methods({
@@ -52,6 +54,8 @@ Meteor.methods({
 		newPlayer.entity = 1;
 		newPlayer.user_id = this.userId;
 		newPlayer.is_playing = true;
+		newPlayer.startTime = new Date().valueOf();
+		newPlayer.round_reward = [0, 0];
 		
 		console.log('User ' + this.userId + ' requested to begin playing');
 		

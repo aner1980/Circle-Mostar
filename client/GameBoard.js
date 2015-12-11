@@ -1,35 +1,11 @@
 Meteor.startup(function() {
-	Tracker.autorun(function() {
-		Meteor.subscribe('Players');
-		Meteor.subscribe('Foods');
-		Meteor.subscribe('Powerups');
-		if (User) {
-		User.find(Meteor.userId()).observeChanges({
-			changed: function(id, fields) {
-				console.log('Received changes to player from server');
-				if (fields.powerup) {
-					Session.set('PowerupIcon', PowerupTable[myCircle.powerup].icon);
-				} else if (!fields.is_playing && Session.get('GameState')=='Playing') {
-					Session.set('GameState', 'GameOver');
-				}
-			}
-		});
-		/*
-			var myCircle = User.findOne(Meteor.userId());
-			if (myCircle) {
-				console.log('Tracker runs');
-				// Check for game over
-				if (!myCircle.is_playing && Session.get('GameState')=='Playing')
-					Session.set('GameState', 'GameOver')
-				
-				// Check for powerup collected
-				if (myCircle.powerup > 0 && myCircle.pu_active < 0 && PowerupTable[myCircle.powerup])
-					Session.set('PowerupIcon', PowerupTable[myCircle.powerup].icon);
-			}
-		*/
-		}
-	});
-
+	Meteor.subscribe('Players');
+	Meteor.subscribe('Foods');
+	Meteor.subscribe('Powerups');
+	Meteor.subscribe('Abilities');
+	
+	Session.set('ProfileOp', '');
+	Session.set('GameState', 'NotStarted');
 });
 
 Template.site.helpers({
@@ -58,19 +34,126 @@ Template.site.events({
 	},
 	'click #to-profile': function() {
 		Session.set('CurrentPage', 'Profile');
+	},
+	'click #login-user': function() {
+		Modal.show('loginModal');
+	},
+	'click #logout-user': function() { 
+		Meteor.logout();
 	}
 });
 
 Template.site.onRendered(function() {
 });
 
+Template.accountOptions.helpers({
+	choosingAbility: function() {
+		return Session.get('ProfileOp') == "Ability";
+	},
+	getAbility: function(slot) {
+		if (slot == 1) {
+			return Meteor.user().profile.abil1;
+		} else if (slot == 2) {
+			return Meteor.user().profile.abil2;
+		}
+	}
+});
+
+Template.accountOptions.events({
+	'click .user-logout': function() {
+		Meteor.logout();
+	},
+	'click #btn-play-game': function() {
+		var GameState = Session.get('GameState')
+		if (GameState != 'Started' && GameState != 'Playing') {
+			Session.set('GameState', 'Started');
+			//Board2.initialize_demo1();
+			Meteor.call('startGame', function(error, result) {	
+				if (error) {
+					console.log('ERR');
+				} else {
+					if (result) { 
+						Session.set('GameState', 'Playing');
+						$('#acc-ops-container').toggle(false);
+					}
+					else
+						console.log('ERR');
+				}
+			});
+		}
+	},
+	'click .abil': function(e) {
+		var sender = e.currentTarget;
+		if (sender.id == 'abil-sel-1') {
+			Session.set('AbilitySlot', 1);
+		} else {
+			Session.set('AbilitySlot', 2);
+		}
+		Session.set('ProfileOp', 'Ability');
+	}
+});
+
+Template.accountLevel.helpers({
+	getLevelProgress: function() {
+		var XP = Meteor.user().profile.experience;
+		var level = Math.min(Math.floor(XP / 10000), 20);
+		var progress = Math.min((XP - level * 10000) / 10000, 1);
+		console.log('User XP: ' + XP);
+		return progress * 250;
+	},
+	getLevel: function() {
+		var XP = Meteor.user().profile.experience;
+		var level = Math.min(Math.floor(XP / 10000), 20);
+		console.log('User level: ' + level);
+		return level;
+	}
+});
+
+
+Template.abilitySelect.helpers({
+	abilities: function() {
+		return Abilities.find();
+	}
+});
+
+Template.abilitySelect.events({
+	'click #mask': function() {
+		Session.set('ProfileOp', '');
+	}
+});
+
+Template.ability_entry.events({
+	'click .ability-entry': function(e) {
+		console.log('Attempting to select ability');
+		var a_id = Number(e.currentTarget.id);
+		var prof = Meteor.user().profile
+		var newIco = Abilities.findOne({aid: a_id}).icon;
+		//alert('Selected Ability: ' + a_id);
+		//alert(Abilities.findOne({aid: a_id}).icon);
+		Meteor.users.update(Meteor.userId(), {$set: {["profile.abil"+Session.get('AbilitySlot')]: newIco}});
+		//Meteor.user().profile["abil" + Session.get('AbilitySlot')] = Abilities.findOne({aid: a_id}).icon;
+		Session.set('ProfileOp', '');
+	}
+});
+
+
+
+
+
 Template.gameNotStarted.events({
 	'click .game-start': function() {
 		Session.set('GameState', 'Started');
 		//Board2.initialize_demo1();
-		var started = Meteor.call('startGame');
-		if (started)
-			Session.set('GameState', 'Playing');
+		Meteor.call('startGame', function(error, result) {	
+			if (error) {
+				console.log('ERR');
+			} else {
+				if (result)
+					Session.set('GameState', 'Playing');
+				else
+					console.log('ERR');
+			}
+		});
 	}
 });
 
@@ -78,9 +161,28 @@ Template.gameOver.events({
 	'click .game-start': function() {
 		Session.set('GameState', 'Started');
 		//Board2.initialize_demo1();
-		var started = Meteor.call('startGame');
-		if (started)
-			Session.set('GameState', 'Playing');
+		Meteor.call('startGame', function(error, result) {	
+			if (error) {
+				console.log('ERR');
+			} else {
+				if (result)
+					Session.set('GameState', 'Playing');
+				else
+					console.log('ERR');
+			}
+		});
+	}
+});
+
+Template.gameOver.helpers({
+	getReward: function(rewardType) {
+		var me = User.findOne({user_id: Meteor.userId()});
+		if (rewardType == 'XP')
+			return me.round_reward[0];
+		else if (rewardType == 'Currency')
+			return me.round_reward[1];
+		else
+			return 'N/A';
 	}
 });
 
