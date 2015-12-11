@@ -40,13 +40,23 @@ header {
   padding: 20px 15px 15px 15px;
   position: relative;
 }
-
+/*
+.jumbotron {
+	
+	background-image: url("http://www.thisiscolossal.com/wp-content/uploads/2015/03/florian-7.gif");
+	background-size: cover;
+	
+}
+*/
 
 body {
+	background-color: #000;
+	/*
 	margin: 0;
   	padding: 0;
 	background-image: url("http://petaimg.com/wp-content/uploads/2015/09/blue-background-wallpaper-high-resolution.jpg");
 	background-size: cover;
+	*/
 }
 
 body, td, th {

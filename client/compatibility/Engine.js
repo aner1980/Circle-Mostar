@@ -372,8 +372,9 @@ function runGame() {
 		} else if (me.pu_active >= 0) {
 			Session.set('PowerupIcon', PowerupTable[0].icon);
 		}
-		console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState') + ' | ' + me.radius);
+		//console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState') + ' | ' + me.radius);
 		if (me.radius==0 && !me.is_playing && Session.get('GameState')=='Playing') {
+			achvCheck(me);
 			Session.set('GameState', 'GameOver');
 			$('#acc-ops-container').toggle(true);
 		}
@@ -414,6 +415,9 @@ function getTimePlayed(start) {
 
 $(function() {
 	// Set up event listener
+	$.getScript( "http://www.google.com/recaptcha/api/js/recaptcha_ajax.js", function() {
+        Recaptcha.create("<PUBLIC_KEY>", "recaptchadiv", {theme: "clean"});
+    });
 	
 	$("#cvs-game-board").on('mousemove', function(e) {
 		mousePos[0] = e.clientX;

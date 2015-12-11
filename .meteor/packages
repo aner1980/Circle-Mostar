@@ -10,3 +10,4 @@ twbs:bootstrap
 service-configuration
 useraccounts:unstyled
 peppelg:bootstrap-3-modal
+chrismbeckett:toastr
