@@ -5,7 +5,7 @@ var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
 var mousePos = [0, 0];
-
+var Bounds = [ [0,0], [2000,2000] ];
 //TODO: Get PowerupIcon --> player.powerup -- Powerups[#].icon | DONE
 //TODO: Set GameOver when dead (status 'Playing' + not playing) | DONE
 //TODO: Set Playing when starting (Meteor.call()) | DONE
@@ -279,6 +279,16 @@ function drawBoard() {
 		// Correct canvas width/height based on display width/height
 		cvs.width = window.innerWidth;
 		cvs.height = window.innerHeight;
+			
+		var posOffset = [0, 0]; // Offset to center cam on player
+		var me = User.findOne({user_id: Meteor.userId()});
+		if (me) {
+			posOffset = [
+				cvs.width/2 - me.pos[0],
+				cvs.height/2 - me.pos[1]
+			];
+		}
+		//console.log(posOffset);
 		
 		//console.log('#Players: ' + currentPlayers.length + '\n' + 
 		//			'#Foods: ' + currentFoods.length + '\n' + 
@@ -287,13 +297,21 @@ function drawBoard() {
 		var ctx = cvs.getContext('2d');
 		ctx.clearRect(0,0,cvs.width,cvs.height);
 		
+		// Draw bounds
+		var bx1 = Bounds[0][0] + posOffset[0];
+		var bx2 = Bounds[1][0];
+		var by1 = Bounds[0][1] + posOffset[1];
+		var by2 = Bounds[1][1];
+		ctx.rect(bx1,by1,bx2,by2);
+		ctx.stroke();
+		
 		//console.log('Canvas size: [' + cvs.width + ',' + cvs.height + ']');
 		
 		// DRAW THE FOODS
 		for (var i = 0; i < currentFoods.length; i++) {
 			var Circle = currentFoods[i]
-			var x = Circle.pos[0];
-			var y = Circle.pos[1];
+			var x = Circle.pos[0] + posOffset[0];
+			var y = Circle.pos[1] + posOffset[1];
 			
 			ctx.fillStyle = 'red';
 			
@@ -306,8 +324,8 @@ function drawBoard() {
 		// DRAW THE POWERUPS
 		for (var i = 0; i < currentPowerups.length; i++) {
 			var Circle = currentPowerups[i]
-			var x = Circle.pos[0];
-			var y = Circle.pos[1];
+			var x = Circle.pos[0] + posOffset[0];
+			var y = Circle.pos[1] + posOffset[1];
 			ctx.fillStyle = 'blue';
 			
 			ctx.beginPath();
@@ -319,16 +337,19 @@ function drawBoard() {
 		// DRAW THE PLAYERS
 		for (var i = 0; i < currentPlayers.length; i++) {
 			var Circle = currentPlayers[i]
-			var x = Circle.pos[0];
-			var y = Circle.pos[1];
+			var x = Circle.pos[0] + posOffset[0];
+			var y = Circle.pos[1] + posOffset[1];
 			
 			if (Circle.radius <= 0) 
 				continue;
 			
+			var invisCondition = (Circle.powerup==2 && Circle.pu_active>0);
 			if (Circle.user_id == Meteor.userId()) {
 				ctx.fillStyle = 'black';
+				ctx.globalAlpha = (invisCondition ? 0.3 : 1);
 			} else {
 				ctx.fillStyle = 'yellow';
+				ctx.globalAlpha = (invisCondition ? 0.05 : 1);
 			}
 			
 			ctx.beginPath();

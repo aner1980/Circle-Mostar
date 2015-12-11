@@ -100,14 +100,14 @@ Template.accountOptions.events({
 Template.accountLevel.helpers({
 	getLevelProgress: function() {
 		var XP = Meteor.user().profile.experience;
-		var level = Math.min(Math.floor(XP / 10000), 20);
-		var progress = Math.min((XP - level * 10000) / 10000, 1);
+		var level = Math.min(Math.floor(XP / 6000), 20);
+		var progress = Math.min((XP - level * 6000) / 6000, 1);
 		console.log('User XP: ' + XP);
 		return progress * 250;
 	},
 	getLevel: function() {
 		var XP = Meteor.user().profile.experience;
-		var level = Math.min(Math.floor(XP / 10000), 20);
+		var level = Math.min(Math.floor(XP / 6000), 20);
 		console.log('User level: ' + level);
 		return level;
 	}

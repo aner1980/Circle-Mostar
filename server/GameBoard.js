@@ -55,7 +55,9 @@ Meteor.methods({
 		}
 		var currentUser = User.findOne();
 		var newPlayer = new Circle();
-		newPlayer.pos = [Math.ceil(Math.random()*1480) + 5, Math.ceil(Math.random()*830) + 5];
+		var x = Math.ceil(Math.random()*Bounds[1][0]-60) + 30;
+		var y = Math.ceil(Math.random()*Bounds[1][1]-60) + 30;
+		newPlayer.pos = [x, y];
 		newPlayer.radius = 30;
 		newPlayer.entity = 1;
 		newPlayer.user_id = this.userId;
@@ -101,6 +103,14 @@ Meteor.methods({
 					}
 				});
 				return true;
+			} else if (pid == 2) {
+				//console.log('\t\t[USE: SPEEDBOOST]');
+				User.update({user_id:this.userId}, {
+					$set: {
+						pu_active : PowerupTable[pid].duration, 
+					}
+				});
+				return true;
 			}
 		}
 		return false;
@@ -108,13 +118,14 @@ Meteor.methods({
 });
 
 Meteor.startup(function () {
+		User.update({}, {$set: {is_playing: false, radius: 0}});
 		Food.remove({});
 		PowerUp.remove({});
 		// Create food
-		for (var i = 0; i < 200; i++) {
+		for (var i = 0; i < 400; i++) {
 			var newFood = new Circle();
-			var x = Math.ceil(Math.random()*1480) + 5;
-			var y = Math.ceil(Math.random()*830) + 5;
+			var x = Math.ceil(Math.random()*Bounds[1][0]-10) + 5;
+			var y = Math.ceil(Math.random()*Bounds[1][1]-10) + 5;
 			newFood.entity = 3;
 			newFood.radius = 5;
 			newFood.pos = [x, y];
@@ -124,10 +135,10 @@ Meteor.startup(function () {
 		//create powerUps
 		for (var i = 0; i < 50; i++) {
 			var newPowerUp = new Circle();
-			var x = Math.ceil(Math.random()*500) + 5 + 500;
-			var y = Math.ceil(Math.random()*500) + 5 + 200;
+			var x = Math.ceil(Math.random()*Bounds[1][0]-10) + 5;
+			var y = Math.ceil(Math.random()*Bounds[1][1]-10) + 5;
 			newPowerUp.entity = 2;
-			newPowerUp.powerup = 1;
+			newPowerUp.powerup = Math.floor(Math.random()*2) + 1;
 			newPowerUp.radius = 5;
 			newPowerUp.pos = [x, y];
 			PowerUp.insert(newPowerUp);

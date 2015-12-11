@@ -1,10 +1,35 @@
 var DELTAT = 0.0625;
-var RADIUS_DECAY_MOD = 1/15;
-var RADIUS_DECAY_PS = 3; // per second
-var FOOD_RADIUS_INCREASE = .5;
+var RADIUS_DECAY_MOD = 1/20;
+var RADIUS_DECAY_PS = 1; // per second
+var FOOD_RADIUS_INCREASE = 1;
 var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
+
+function Circle() {
+	this.startTime = 0;
+	this.pos = [0, 0];
+	this.vel = [0, 0];
+	this.speed = 100;
+	this.radius = 5;
+	this.powerup = 0;
+	this.pu_active = 0;
+	this.user_id = "";
+	this.entity = 0;
+	this.game_over_flag = false;
+	this.isDummy = false
+	this.players_eaten = 0;
+	this.food_eaten = 0;
+	this.speed_powerup = 0;
+	this.died_while_speeding = 0;
+	this.died_from_consumption = 0;
+	this.consumed_multiple_players = 0;
+	this.failed_consumption = 0;
+	this.is_playing = false;
+	this.round_reward = [0, 0];
+	this.deaths = 0;
+	this.time_died = 0;
+};
 
 /*
 var User = new Mongo.Collection('Players');
@@ -111,11 +136,7 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 				}
 			});
 			
-			PowerUp.update(UsedCircle._id, { 
-				$set: {
-					radius: 0
-				}
-			});
+			PowerUp.remove(UsedCircle._id);
 		}
 	} else if (UsedCircle.entity == 3) {
 		// Consumed FOOD
@@ -130,15 +151,9 @@ function consumeOrGather(OwnerCircle, UsedCircle) {
 			}
 		});
 			
-		Food.update(UsedCircle._id, { 
-			$set: {
-				radius: 0
-			}
-		});
+		Food.remove(UsedCircle._id);
 	}
 }
-
-var Powerups = [ {icon: '/powerup-empty.png'}, {name: "speed", duration: 5, bonus: 60, icon: '/powerup-speed.png'} ]
 
 Board = {
 	Active_Circles: [], // Array to store circles
@@ -154,8 +169,14 @@ Board = {
 		for (var i = 0; i < activePlayers.length; i++) {
 			var user = activePlayers[i];
 			// performMove()
-			user.pos[0] += user.vel[0] * user.speed * DELTAT;
-			user.pos[1] += user.vel[1] * user.speed * DELTAT;
+			var newX = user.pos[0] + user.vel[0] * user.speed * DELTAT;
+			var newY = user.pos[1] + user.vel[1] * user.speed * DELTAT;
+			
+			// Recalc for out of bounds
+			newX = Math.min( Bounds[1][0] - user.radius, Math.max( Bounds[0][0] + user.radius, newX ) );
+			newY = Math.min( Bounds[1][1] - user.radius, Math.max( Bounds[0][1] + user.radius, newY ) );
+			
+			user.pos = [newX, newY];
 			
 			if (!user.isDummy && user.entity == 1) {
 				user.radius -= Math.max(user.radius * RADIUS_DECAY_MOD * DELTAT, DELTAT); //RADIUS_DECAY_PS * DELTAT;
@@ -209,13 +230,14 @@ Board = {
 			var powerup = player.powerup;
 			if (powerup > 0 && player.entity == 1) {
 				//console.log('POWERUP: ' + powerup);
-				console.log('Running Powerups (' + powerup + ') for player ' + player.user_id + ' | Checking ...');
-				console.log('\t' + player.pu_active + ' == ' + PowerupTable[powerup].duration);
+				//console.log('Running Powerups (' + powerup + ') for player ' + player.user_id + ' | Checking ...');
+				//console.log('\t' + player.pu_active + ' == ' + PowerupTable[powerup].duration);
 				if (player.pu_active == PowerupTable[powerup].duration) {
 					switch (powerup) {
 						case 1:
 							player.speed += PowerupTable[1].bonus;
 							break;
+						// Case2 : INVIS (nothing required)
 					}
 				} else if (player.pu_active == -1) {
 					continue;
@@ -223,9 +245,10 @@ Board = {
 					switch (powerup) {
 						case 1: 
 							player.speed -= PowerupTable[1].bonus;
-							player.powerup = 0;
 							break;
+						// Case2 : INVIS (nothing required)
 					}
+					player.powerup = 0;
 				}
 				player.pu_active -= DELTAT;
 				
@@ -315,6 +338,32 @@ Board = {
 		this.Active_Circles = newCircles;
 		*/
 	},
+	spawnItems: function() {
+		var nFood = Food.find().count();
+		var nPowers = PowerUp.find().count();
+		//console.log(nFood)
+		if (nFood < 200) {
+			var newFood = new Circle();
+			var x = Math.ceil(Math.random()*Bounds[1][0]-10) + 5;
+			var y = Math.ceil(Math.random()*Bounds[1][1]-10) + 5;
+			newFood.entity = 3;
+			newFood.radius = 5;
+			newFood.pos = [x, y];
+			Food.insert(newFood);
+		}
+
+		//create powerUps
+		if (nPowers < 50) {
+			var newPowerUp = new Circle();
+			var x = Math.ceil(Math.random()*Bounds[1][0]-10) + 5;
+			var y = Math.ceil(Math.random()*Bounds[1][1]-10) + 5;
+			newPowerUp.entity = 2;
+			newPowerUp.powerup = Math.floor(Math.random()*2) + 1; // DO RANDOM POWERUP
+			newPowerUp.radius = 5;
+			newPowerUp.pos = [x, y];
+			PowerUp.insert(newPowerUp);
+		}
+	},
 	createEntity: function(entityType, x, y) {
 		var C = new Circle2();
 		C.pos = [x, y];
@@ -397,6 +446,7 @@ Board = {
 		Board.detectAllCollisions();
 		Board.runPowerups();
 		Board.determineGameOver();
+		Board.spawnItems();
 		//GameBoard.update({_id: GameBoard.findOne()._id}, {ActiveCircles: Board2.Active_Circles});
 	}
 		

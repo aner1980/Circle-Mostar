@@ -104,14 +104,9 @@ achvCheck = function(circle){
 			
 	}
 };
-
-if (Meteor.isServer) {
-	Meteor.publish('achievements', function() {
-		return Achievements.find();
-	});
 	
-  Meteor.startup(function () {
-    // code to run on server at startup
+Meteor.startup(function () {
+	// code to run on server at startup
 	Achievements.upsert({achievement: "Nobody Likes Salad"}, {achievement: "Nobody Likes Salad", description:  "Consume another player.", id:1});
 	Achievements.upsert({achievement: "The Atkins Diet"}, {achievement: "The Atkins Diet", description:  "Consume 5 other players without dying.", id:2});
 	Achievements.upsert({achievement: "Diabeetus"}, {achievement: "Diabeetus", description:  "Consume 25 other players without dying.", id:3});
@@ -125,5 +120,4 @@ if (Meteor.isServer) {
 	Achievements.upsert({achievement: "Fist Full of Small Fries"},  {achievement: "Fist Full of Small Fries", description:  "Consume 5 players at the same time.", id:11});
 	Achievements.upsert({achievement: "Black Hole"}, {achievement: "Black Hole", description:  "Consume 10 players at the same time.", id:12});
 	Achievements.upsert({achievement: "Sumo Wrestling"}, {achievement: "Sumo Wrestling", description:  "Fail to consume another player because they're the same size", id:13});
-  });
-}
+});
