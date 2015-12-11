@@ -276,7 +276,8 @@ Board = {
 				$set: {
 					radius: 0,
 					is_playing: false,
-					round_reward: [xp, currency]
+					round_reward: [xp, currency],
+					time_died: new Date().valueOf()
 				}
 			});
 			

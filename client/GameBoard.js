@@ -57,6 +57,9 @@ Template.accountOptions.helpers({
 		} else if (slot == 2) {
 			return Meteor.user().profile.abil2;
 		}
+	},
+	gameStateIs: function(state) {
+		return Session.get('GameState') == state;
 	}
 });
 
@@ -180,6 +183,18 @@ Template.leaderboard.helpers({
 Template.leaderEntry.helpers({
 	getUsername: function() {
 		return Meteor.users.findOne(this.user_id).username;
+	}
+});
+
+Template.postGameInfo.helpers({
+	getUserCircle: function() {
+		return User.findOne({user_id: Meteor.userId()});
+	},
+	getTimePlayed: function() {
+		return (this.time_died - this.startTime) / 1000;
+	},
+	getReward: function(i) {
+		return this.round_reward[i];
 	}
 });
 

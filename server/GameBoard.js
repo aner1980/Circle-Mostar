@@ -42,6 +42,7 @@ function Circle() {
 	this.is_playing = false;
 	this.round_reward = [0, 0];
 	this.deaths = 0;
+	this.time_died = 0;
 };
 
 Meteor.methods({

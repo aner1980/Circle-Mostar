@@ -188,6 +188,9 @@
 					<li>Stars: {{currentUser.profile.currency}}</li>
 					<li>High Score: {{currentUser.profile.HighScore}}</li>
 				</ul>
+				{{#if gameStateIs "GameOver"}}
+					{{> postGameInfo}}
+				{{/if}}
 			</div>
 			<hr>
 			<!-- Game Options -->
@@ -207,6 +210,18 @@
 			<!-- Account Controls -->
 			<span class="user-logout">Log Out</span>
 		</div>
+	</div>
+</template>
+
+<template name="postGameInfo">
+	<div id="post-game-info">
+		{{#with getUserCircle}}
+			<span class="post-game-info">XP: +{{getReward 0}}</span><br />
+			<span class="post-game-info">Stars: +{{getReward 1}}</span><br /><br />
+			<span class="post-game-info">Time Alive: {{getTimePlayed}} s</span><br />
+			<span class="post-game-info">Players Killed: {{players_eaten}}</span><br />
+			<span class="post-game-info">Food Eaten: {{food_eaten}}</span><br />
+		{{/with}}
 	</div>
 </template>
 
