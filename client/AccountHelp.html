@@ -1,0 +1,32 @@
+<template name="howtoplay_page">
+	<div class="help-container">
+		<ul>
+			<li>You start off with a <span class="black">CIRCLE</span> on the game board.</li>
+			<li>Try to eat as much <span class="red">FOOD</span> as possible to stay alive or eat other <span class="yellow">PLAYERS</span> that's SMALLER than you.</li>
+			<li>You may also eat <span class="blue">POWERUPS</span> and activate them.</li>
+			<li>Below are some of the sample powerups.</li>
+		</ul>
+
+		{{> choose_ability}}
+
+	</div>
+</template>
+
+
+<template name="ability_entry_small">
+	<div class="ability-entry-small" id="{{aid}}">
+		<img class="a-icon-small" src="{{icon}}" align="left" />
+		<div class="abil-dets-small">
+			<span class="a-name-small">{{name}}</span><br />
+			<span class="a-desc-small">{{desc}}</span>
+		</div>
+	</div>
+</template>
+
+<template name="choose_ability">
+	<div id="ability-list2">
+		{{#each abilities}}
+			{{> ability_entry_small}}
+		{{/each}}
+	</div>
+</template>

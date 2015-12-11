@@ -117,6 +117,13 @@ Template.abilitySelect.helpers({
 	}
 });
 
+
+Template.choose_ability.helpers({
+	abilities: function() {
+		return Abilities.find();
+	}
+});
+
 Template.abilitySelect.events({
 	'click #mask': function() {
 		Session.set('ProfileOp', '');
@@ -163,11 +170,21 @@ Template.playerControls.events({
 		rad.prop('checked', Session.get('ControlOp') == rad.val());
 	}
 });
+
+Template.leaderboard.helpers({
+	top5Players: function() {
+		return User.find({is_playing: true}, {limit: 5, sort: {players_eaten: -1, food_eaten: -1, startTime: 1}});
+	}
+});
 	
+Template.leaderEntry.helpers({
+	getUsername: function() {
+		return Meteor.users.findOne(this.user_id).username;
+	}
+});
 
 
-
-
+/*
 Template.gameNotStarted.events({
 	'click .game-start': function() {
 		Session.set('GameState', 'Started');
@@ -213,7 +230,7 @@ Template.gameOver.helpers({
 			return 'N/A';
 	}
 });
-
+*/
 $(function() {
 	
 	Session.set('CurrentPage', 'Game');

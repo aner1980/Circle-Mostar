@@ -32,7 +32,7 @@
 	margin-top: 10px;
 }
 
-#account-details, #login-box {
+#login-box {
 	margin: auto;
 	margin-top: 100px;
 	width: 300px;
@@ -111,9 +111,91 @@
 
 #acc-controls-wrapper {
 	vertical-align: top;
-	margin-right: 25px;
+	text-align: left;
+	background-color: white;
+	padding: 25px;
+	width: 300px;
+}
+#acc-help-wrapper {
+	width: 500px;
+	vertical-align: top;
 	text-align: left;
 	background-color: white;
 	margin-top: 100px;
+	margin-right: 25px;
 	padding: 25px;
 }
+
+#account-details {
+	margin: auto;
+	margin-top: 25px;
+	width: 300px;
+	background-color: white;
+	padding: 25px;
+	text-align: left;
+}
+
+#acc-ctrl-dets-wrapper {
+	vertical-align: top;
+	text-align: left;
+	margin-top: 100px;
+	width: 300px;
+	display: inline-block;
+}
+
+#help-container {
+	width: 450px;
+}
+
+.red {
+	color: red;
+}
+
+.yellow {
+	color: goldenrod;
+}
+
+.blue {
+	color: blue;
+}
+
+.ability-entry-small {
+	width: 450px;
+	margin-bottom: 10px;
+}
+
+.a-icon-small {
+	width: 25px;
+	height: 25px;
+	margin-top: 5px;
+}
+
+.abil-dets-small {
+	width: 414px;
+	vertical-align: top;
+	margin-left: 10px;
+	display: inline-block;
+}
+
+.a-name-small {
+	font-weight: bold;
+}
+
+#leaderboard-div {
+	position: absolute;
+	background-color: rgba(130, 130, 130, 0.7);
+	color: black;
+	width: 250px;
+	padding: 15px;
+	top: 15px;
+	right: 15px;
+	border-radius: 15px;
+	text-align: center;
+}
+
+.leader-entry {
+	height: 32px;
+	line-height: 32px;
+	font-size: 16px;
+}
+
