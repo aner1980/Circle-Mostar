@@ -1,5 +1,5 @@
 var DELTAT = 0.0625;
-var RADIUS_DECAY_MOD = 1/15;
+var RADIUS_DECAY_MOD = 1/25;
 var RADIUS_DECAY_PS = 3; // per second
 var FOOD_RADIUS_INCREASE = .5;
 var GameIntervalDemo = null;
@@ -262,6 +262,7 @@ Board = {
 		
 		for (var i = 0; i < deadPlayers.length; i++) {
 			var player = deadPlayers[i];
+			player.deaths = 1;
 			
 			// Check Achievements
 			achvCheck(player);

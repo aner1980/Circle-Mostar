@@ -3,6 +3,7 @@ Meteor.startup(function() {
 	Meteor.subscribe('Foods');
 	Meteor.subscribe('Powerups');
 	Meteor.subscribe('Abilities');
+	Meteor.subscribe('achievements');
 	
 	Session.set('ProfileOp', '');
 	Session.set('GameState', 'NotStarted');
@@ -133,6 +134,18 @@ Template.ability_entry.events({
 		Meteor.users.update(Meteor.userId(), {$set: {["profile.abil"+Session.get('AbilitySlot')]: newIco}});
 		//Meteor.user().profile["abil" + Session.get('AbilitySlot')] = Abilities.findOne({aid: a_id}).icon;
 		Session.set('ProfileOp', '');
+	}
+});
+
+Template.achievementsUnlocked.helpers({
+	achievements: function() {
+		return Achievements.find({id: {$in: Meteor.user().profile.achievements}});
+	}
+});
+
+Template.achievementsLocked.helpers({
+	achievements: function() {
+		return Achievements.find({id: {$nin: Meteor.user().profile.achievements}});
 	}
 });
 

@@ -106,19 +106,40 @@
 </template>
 
 <template name="accountControls">
-	<div id="account-wrapper" class="div-inline center-x">
-		{{> accountAchievements}}
+	<div id="account-wrapper" class="center-x">
 		{{> accountOptions}}
+		{{> accountAchievements}}
 	</div>
 </template>
 
 <template name="accountAchievements">
-	{{> achievementsUnlocked}}
-	{{> achievementsLocked}}
+	<div id="achievement-wrapper" class="div-inline rounded">
+		{{> achievementsUnlocked}}
+		{{> achievementsLocked}}
+	</div>
 </template>
 
-<template name="achievementsUnlocked"></template>
-<template name="achievementsLocked"></template>
+<template name="achievementsUnlocked">
+	<h4 class="black">Unlocked Achievements</h4>
+	<ul>
+		{{#each achievements}}
+			{{> achievement_entry}}
+		{{/each}}
+	</ul>
+</template>
+
+<template name="achievementsLocked">
+	<h4 class="black">Locked Achievements</h4>
+	<ul>
+		{{#each achievements}}
+			{{> achievement_entry}}
+		{{/each}}
+	</ul>
+</template>
+
+<template name="achievement_entry">
+	<li>{{achievement}} - {{description}}</li>
+</template>
 
 <template name="accountOptions">
 	<div id="account-details" class="rounded div-inline">

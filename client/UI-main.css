@@ -20,6 +20,7 @@
 
 .div-inline {
 	position: relative;
+	display: inline-block;
 }
 
 .center-x {
@@ -37,6 +38,7 @@
 	width: 300px;
 	background-color: white;
 	padding: 25px;
+	text-align: left;
 }
 
 .level-progress-bar {
@@ -91,4 +93,18 @@
 	margin-top: 9px;
 	display: inline-block;
 	cursor: pointer;
+}
+
+#account-wrapper {
+	text-align: center;
+	vertical-align: top;
+}
+
+#achievement-wrapper {
+	vertical-align: top;
+	margin-left: 25px;
+	text-align: left;
+	background-color: white;
+	margin-top: 150px;
+	padding: 25px;
 }

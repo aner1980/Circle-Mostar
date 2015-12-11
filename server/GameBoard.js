@@ -16,6 +16,10 @@ Meteor.publish('Powerups', function() {
 	return PowerUp.find();
 });
 
+Meteor.publish('achievements', function() {
+	return Achievements.find();
+});
+
 function Circle() {
 	this.startTime = 0;
 	this.pos = [0, 0];
@@ -37,6 +41,7 @@ function Circle() {
 	this.failed_consumption = 0;
 	this.is_playing = false;
 	this.round_reward = [0, 0];
+	this.deaths = 0;
 };
 
 Meteor.methods({

@@ -69,13 +69,13 @@ achvCheck = function(circle){
 				break;
 			case 11:
 				//consume 5 players at the same time
-				if ((_.indexOf(user_achievements, i) == -1) && (circle.consumed_multiple_players >= 5)){
+				if ((_.indexOf(user_achievements, i) == -1) && (circle.consumed_multiple_players >= 3)){
 					user_achievements.push(i);		//if the achievement is NOT in the collection, add it.
 				}
 				break;
 			case 12:
 				//consume 10 players at the same time
-				if ((_.indexOf(user_achievements, i) == -1) && (circle.consumed_multiple_players >= 10)){
+				if ((_.indexOf(user_achievements, i) == -1) && (circle.consumed_multiple_players >= 5)){
 					user_achievements.push(i);		//if the achievement is NOT in the collection, add it.
 				}
 				break;
