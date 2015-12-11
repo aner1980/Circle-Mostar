@@ -1,5 +1,9 @@
 <body>  
 	{{> loginModal}}
+	<canvas id="cvs-game-board"></canvas>
+	<div class="ui-element" id="game-time">
+		<span id="game-time-text">0:00</span>
+	</div>
     {{> site}}
 </body>
 
@@ -47,10 +51,6 @@
 
 -->
 	<!-- Before playing game, show menu, canvas in the background -->
-	<canvas id="cvs-game-board"></canvas>
-	<div class="ui-element" id="game-time">
-		<span id="game-time-text">0:00</span>
-	</div>
 	<div class="ui-element" id="game-actives">
 		<img class="ui-element a-slot" id="slot-powerup" src="{{getPowerupIcon}}" />
 		<img class="ui-element a-slot" id="slot-abil1" src="{{currentUser.profile.abil1}}" />
@@ -107,8 +107,19 @@
 
 <template name="accountControls">
 	<div id="account-wrapper" class="center-x">
+		{{> playerControls}}
 		{{> accountOptions}}
 		{{> accountAchievements}}
+	</div>
+</template>
+
+<template name="playerControls">
+	<div id="acc-controls-wrapper" class="div-inline rounded">
+		<h4>Controls</h4>
+		<input type="radio" name="control" id="ctrl-keys" class="ctrl-sel" value="Keys">
+		<label for="ctrl-keys">Move with Arrow Keys</label><br />
+		<input type="radio" name="control" id="ctrl-mouse" class="ctrl-sel" value="Mouse">
+		<label for="ctrl-mouse">Move with Mouse Control</label>
 	</div>
 </template>
 

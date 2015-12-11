@@ -149,6 +149,21 @@ Template.achievementsLocked.helpers({
 	}
 });
 
+Template.playerControls.events({
+	'change .ctrl-sel': function(e) {
+		var rad = $(e.currentTarget);
+		if (rad.prop('checked')) {
+			//alert(rad.prop('checked'));
+			Session.set('ControlOp', rad.val());
+			//alert('Changed ControlOp to ' + rad.prop('checked'));
+		}
+	},
+	'load .ctrl-sel': function(e) {
+		var rad = $(e.currentTarget);
+		rad.prop('checked', Session.get('ControlOp') == rad.val());
+	}
+});
+	
 
 
 
@@ -200,27 +215,17 @@ Template.gameOver.helpers({
 });
 
 $(function() {
+	
 	Session.set('CurrentPage', 'Game');
 	Session.set('GameState', 'NotStarted');
 	Session.set('PowerupIcon', '/powerup-empty.png');
 	
-	/*
-	$("canvas").on('mousemove', function(e) {
-		//console.log('MouseMove');
-		var myCirc = Board2.getCircleFromUserID(Meteor.userId());
-		if (!myCirc) {
-			//console.log('playr does not have circle');
-			return;
-		}
-		//console.log('doing move');
-		var dx = e.clientX //- myCirc.pos[0]
-		var dy = e.clientY// - myCirc.pos[1]
-		console.log(dx + ", " + dy);
-		var mag = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2))
-		myCirc.vel[0] = dx / mag;
-		myCirc.vel[1] = dy / mag;
-	});
-	*/
+	if (Session.get('ControlOp')!='Mouse') {
+		Session.set('ControlOp', 'Keys');
+		$('#ctrl-keys').prop('checked', true);
+	} else
+		$('#ctrl-mouse').prop('checked', true);
+	
 	window.addEventListener("keydown", function(e) {
     // space and arrow keys
     if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {

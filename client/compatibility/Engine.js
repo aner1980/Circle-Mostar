@@ -4,6 +4,7 @@ var FOOD_RADIUS_INCREASE = 3;
 var GameIntervalDemo = null;
 var KeyMap = [];
 var TotalTimePlayed = 0;
+var mousePos = [0, 0];
 
 //TODO: Get PowerupIcon --> player.powerup -- Powerups[#].icon | DONE
 //TODO: Set GameOver when dead (status 'Playing' + not playing) | DONE
@@ -286,7 +287,7 @@ function drawBoard() {
 		var ctx = cvs.getContext('2d');
 		ctx.clearRect(0,0,cvs.width,cvs.height);
 		
-		console.log('Canvas size: [' + cvs.width + ',' + cvs.height + ']');
+		//console.log('Canvas size: [' + cvs.width + ',' + cvs.height + ']');
 		
 		// DRAW THE FOODS
 		for (var i = 0; i < currentFoods.length; i++) {
@@ -338,44 +339,65 @@ function drawBoard() {
 	}
 
 function SendVelocityUpdate() {
-	var userVel = [0, 0];
-	if (KeyMap[37] == 1) {
-		// Left
-		userVel[0] += -1;
+	if (Session.get('ControlOp')=='Keys') {
+		var userVel = [0, 0];
+		if (KeyMap[37] == 1) {
+			// Left
+			userVel[0] += -1;
+		}
+		if (KeyMap[39] == 1) {
+			// Right
+			userVel[0] += 1;
+		}
+		if (KeyMap[38] == 1) {
+			// Up
+			userVel[1] += -1;
+		}
+		if (KeyMap[40] == 1) {
+			// Down
+			userVel[1] += 1;
+		}
+		Meteor.call('changeDirection', userVel);
 	}
-	if (KeyMap[39] == 1) {
-		// Right
-		userVel[0] += 1;
-	}
-	if (KeyMap[38] == 1) {
-		// Up
-		userVel[1] += -1;
-	}
-	if (KeyMap[40] == 1) {
-		// Down
-		userVel[1] += 1;
-	}
-	Meteor.call('changeDirection', userVel);
 }
 
 function runGame() {
 	drawBoard();
 	
-	var me = User.findOne({user_id: Meteor.userId()})
+	
+	var me = User.findOne({user_id: Meteor.userId()});
 	if (me) {
 		if (me.powerup >= 0 && me.pu_active == -1) {
 			Session.set('PowerupIcon', PowerupTable[me.powerup].icon);
 		} else if (me.pu_active >= 0) {
 			Session.set('PowerupIcon', PowerupTable[0].icon);
 		}
-		//console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState'));
+		console.log('Game Status: ' + me.is_playing + ' | ' + Session.get('GameState') + ' | ' + me.radius);
 		if (me.radius==0 && !me.is_playing && Session.get('GameState')=='Playing') {
 			Session.set('GameState', 'GameOver');
 			$('#acc-ops-container').toggle(true);
 		}
 	
-		if (me.is_playing)
+		if (me.is_playing) {
+			// Mouse Movement
+			if (Session.get('ControlOp')=='Mouse') {
+				//var myCirc = User.findOne({user_id: Meteor.userId()});
+				//console.log(myCirc);
+				//console.log(myCirc.is_playing);
+				if (!me || !me.is_playing || Session.get('ControlOp')!='Mouse') {
+					//console.log('playr does not have circle');
+					return;
+				}
+				//console.log('doing move');
+				var dx = mousePos[0] - me.pos[0];
+				var dy = mousePos[1] - me.pos[1];
+				//console.log(dx + ", " + dy);
+				var mag = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				//console.log('Attempt to move with mouse');
+				Meteor.call('changeDirection', [dx / mag, dy/mag]);
+			}
 			$("#game-time-text").text(getTimePlayed(me.startTime));
+		}
 	} else {
 		$("#game-time-text").text('00:00');
 	}
@@ -392,6 +414,12 @@ function getTimePlayed(start) {
 
 $(function() {
 	// Set up event listener
+	
+	$("#cvs-game-board").on('mousemove', function(e) {
+		mousePos[0] = e.clientX;
+		mousePos[1] = e.clientY;
+		//console.log('MouseMove');
+	});
 
 	document.addEventListener('keydown',function(e){
 		KeyMap[e.keyCode] = 1;
