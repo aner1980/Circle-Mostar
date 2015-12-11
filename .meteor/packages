@@ -11,3 +11,6 @@ service-configuration
 useraccounts:unstyled
 peppelg:bootstrap-3-modal
 chrismbeckett:toastr
+accounts-google
+accounts-facebook
+accounts-ui
